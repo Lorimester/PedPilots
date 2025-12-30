@@ -1,14 +1,188 @@
-/**
- * PedPilots - Main Application Logic
- * Supports modular lesson loading and dynamic persistence.
- */
+// --- Global State ---
+window.currentLessonId = null;
+
+// --- Global Functions ---
+
+window.downloadPedPilotsSummary = function () {
+    if (!window.currentLessonId) {
+        alert("Hiba: Nincs aktív tananyag kiválasztva.");
+        return;
+    }
+
+    try {
+        const text = updateSummary();
+        const filename = `pedpilots_l${window.currentLessonId}_osszegzes.txt`;
+        const encodedText = encodeURIComponent(text);
+        const dataUri = 'data:text/plain;charset=utf-8,\ufeff' + encodedText;
+
+        const a = document.createElement('a');
+        a.setAttribute('href', dataUri);
+        a.setAttribute('download', filename);
+        a.style.display = 'none';
+        document.body.appendChild(a);
+
+        a.click();
+
+        setTimeout(() => {
+            document.body.removeChild(a);
+        }, 100);
+    } catch (e) {
+        console.error("Download failed", e);
+        alert("A letöltés nem indult el automatikusan. Kérjük, használja a fenti szövegdobozt a másoláshoz!");
+    }
+};
+
+window.resetPedPilotsData = function () {
+    if (!window.currentLessonId) {
+        console.error("No active lesson ID for reset.");
+        return;
+    }
+    const prefix = `pedpilots_l${window.currentLessonId}_`;
+    if (confirm('Biztosan törölni szeretne minden elmentett választ ebből a modulból? Ez a művelet nem vonható vissza.')) {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key && key.startsWith(prefix)) {
+                keysToRemove.push(key);
+            }
+        }
+        keysToRemove.forEach(key => localStorage.removeItem(key));
+        alert('Adatok törölve ebből a modulból. Az oldal újratöltődik.');
+        loadLesson(window.currentLessonId);
+    }
+};
+
+window.checkSolutions = function () {
+    alert('Megoldások:\n1.R - Rögzült\n2.R - Rögzült\n3.F - Fejlődő\n4.F - Fejlődő\n5.R - Rögzült\n6.F - Fejlődő\n7.R - Rögzült\n8.F - Fejlődő\n9.R - Rögzült\n10.F - Fejlődő');
+};
+
+// --- Helper Functions used by globals ---
+function getLabelForId(id) {
+    const labels = {
+        'reflection-1': 'Három kulcsszó',
+        'reflection-1b': 'Választás indoklása',
+        'reflection-1c': 'Mit árulnak el?',
+        'motivation': 'Motivációs szint (1-10)',
+        'reflection-2': 'Támogató tényezők',
+        'reflection-3': 'Akadályozó tényezők',
+        'debate-statement': 'Vita-állítás',
+        'debate-for': 'Támogató érv',
+        'debate-against': 'Ellenző érv',
+        'mirror-1': 'Sikerélmény leírása',
+        'mirror-2': 'Nehézség leírása',
+        'vark-scores': 'VARK Teszt Pontszámok',
+        'situation-1': 'Helyzet 1 (Matek feladás)',
+        'situation-2': 'Helyzet 2 (Kolléga ellenállása)',
+        'situation-3': 'Helyzet 3 (Nincs tehetségem)',
+        'situation-4': 'Helyzet 4 (Szülői vélemény)',
+        'situation-5': 'Helyzet 5 (Félelem a hibától)',
+        'action-1': 'Fejlődési cél',
+        'action-2': 'Hiba-menedzsment',
+        'action-3': 'Mondat a diákoknak',
+        'action-4': 'Konkrét változtatás',
+        'final-1': 'Záró reflexió a tanulásról',
+        'final-2': 'Még nem tudom, de...',
+        'affirmation': 'Megerősítő mondat',
+        // Module 2
+        'reflection-l2-q1': 'Mikor tanul a legszívesebben?',
+        'reflection-l2-internalization': 'Internalizáció (Amit régen nem kedvelt)',
+        'autonomy-high': 'Magas autonómia példa',
+        'autonomy-low': 'Alacsony autonómia példa',
+        'autonomy-reflection-feelings': 'Autonómia érzések és hatás',
+        'feedback-rewrite-full': 'Visszajelzés átírása',
+        'flow-zone-selection': 'Flow-zóna ütemezés',
+        'volition-plans': 'Akarati tervek (Ha... akkor...)',
+        'scale-l2-autonomy': 'Szükséglet: Autonómia (1-5)',
+        'scale-l2-competence': 'Szükséglet: Kompetencia (1-5)',
+        'scale-l2-relatedness': 'Szükséglet: Kapcsolódás (1-5)',
+        'reflection-l2-perseverance': 'Kitartás példa (Volíció)',
+        'scaffold-step-1': 'Scaffolding 1. lépés',
+        'scaffold-step-2': 'Scaffolding 2. lépés',
+        'scaffold-step-3': 'Scaffolding 3. lépés',
+        'scaffold-step-4': 'Scaffolding 4. lépés',
+        'scaffold-step-5': 'Scaffolding 5. lépés',
+        'match-results': 'Párosítás (Ellenőrzés 1)',
+        'emotion-1': 'Érzelem (Magas kihívás, alacsony komp.)',
+        'emotion-2': 'Érzelem (Alacsony kihívás, magas kép.)',
+        'source-1': 'Forrás (Zsolti példája)',
+        'source-2': 'Forrás (Múlt heti siker)'
+    };
+    return labels[id] || id;
+}
+
+function updateSummary() {
+    const summaryDisplay = document.getElementById('summary-display');
+    if (!summaryDisplay) return "";
+
+    const prefix = `pedpilots_l${window.currentLessonId}_`;
+    let summaryText = `PEDPILOTS - ${window.currentLessonId}. TANULÁSI MODUL ÖSSZEGZÉS\n`;
+    summaryText += "=========================================================\n\n";
+
+    const inputs = document.querySelectorAll('.reflection-input, .slider, #motivation-scale');
+
+    inputs.forEach(input => {
+        const label = getLabelForId(input.id);
+        const value = localStorage.getItem(prefix + input.id);
+        if (value && value !== '""') {
+            let parsed;
+            try {
+                parsed = JSON.parse(value);
+            } catch (e) {
+                parsed = value;
+            }
+            if (parsed !== "" && parsed !== null) {
+                summaryText += `${label}: ${parsed}\n\n`;
+            }
+        }
+    });
+
+    const quizContainers = document.querySelectorAll('.vark-options, #quiz-questions, #feedback-analysis-quiz, #l2-feedback-quiz');
+    quizContainers.forEach(container => {
+        const val = localStorage.getItem(prefix + `${window.currentLessonId}_quiz_${container.id}`);
+        if (val) {
+            try {
+                const selected = JSON.parse(val);
+                if (selected && selected.length > 0) {
+                    summaryText += `Interaktív feladat (${container.id}): ${selected}\n\n`;
+                }
+            } catch (e) { }
+        }
+    });
+
+    const tables = document.querySelectorAll('.interactive-table tbody');
+    tables.forEach(tbody => {
+        const val = localStorage.getItem(prefix + `${window.currentLessonId}_table_${tbody.id}`);
+        if (val) {
+            summaryText += `Táblázat választás (${tbody.id}): Kijelölt sorok indexei: ${val}\n\n`;
+        }
+    });
+
+    const valRadios = localStorage.getItem(prefix + `${window.currentLessonId}_radios_behavior`);
+    if (valRadios) {
+        summaryText += `Viselkedés értékelés: ${valRadios}\n\n`;
+    }
+
+    summaryText += "\n";
+
+    if (window.currentLessonId === 1) {
+        const varkSaved = localStorage.getItem(prefix + 'vark-scores');
+        if (varkSaved) {
+            const parsed = JSON.parse(varkSaved);
+            summaryText += `VARK Eredmény: V:${parsed.a}, R:${parsed.b}, A:${parsed.c}, K:${parsed.d}\n`;
+        }
+    }
+
+    summaryDisplay.innerHTML = `
+        <div class="summary-box">
+            <p>Az Ön válaszai rögzítésre kerültek. Ha az automatikus letöltés nem sikerülne, innen is kimásolhatja az adatokat:</p>
+            <textarea id="manual-summary-copy" readonly class="reflection-input" style="height: 200px; font-family: monospace; font-size: 0.9rem; background: #fdfdfd; border: 1px solid var(--secondary-color);">${summaryText}</textarea>
+        </div>
+    `;
+
+    return summaryText;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Global State ---
-    let currentLessonId = null;
-    let ui = {}; // Container for dynamic UI elements
-
-    // --- Static UI Elements ---
     const dashboardView = document.getElementById('dashboard-view');
     const lessonView = document.getElementById('lesson-view');
     const lessonContent = document.getElementById('lesson-content');
@@ -17,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
     const sidebar = document.querySelector('.sidebar');
 
-    // --- Data ---
     const varkQuestions = [
         { q: "Amikor valami újat tanul, jobban szeret...", a: "bemutatót nézni", b: "utasításokat vagy kézikönyvet olvasni", c: "meghallgatni egy magyarázatot", d: "kipróbálni saját maga" },
         { q: "Ha meg kell értenie, hogyan működik valami, akkor...", a: "megnéz egy videót vagy ábrákat", b: "olvas róla", c: "megkér valakit, hogy magyarázza el", d: "kipróbálja, kísérletezik vele" },
@@ -37,20 +210,18 @@ document.addEventListener('DOMContentLoaded', () => {
         { q: "Tanulás közben legszívesebben...", a: "megnézi, hogyan csinálják", b: "elolvassa a tananyagot", c: "hallgatja, hogy elmagyarázzák", d: "kipróbálja saját maga" }
     ];
 
-    // --- View Management ---
-
-    /**
-     * Loads a lesson dynamically using fetch.
-     * @param {number} id - The lesson ID to load.
-     */
     window.loadLesson = async function (id) {
         if (id !== 1 && id !== 2) {
             alert("Ez a modul még fejlesztés alatt áll.");
             return;
         }
 
-        currentLessonId = id;
+        window.currentLessonId = id;
+
         lessonContent.innerHTML = '<div class="loading-spinner">Munkamenet betöltése...</div>';
+
+        // Reset progress bar
+        if (progressBar) progressBar.style.width = '0%';
 
         dashboardView.classList.add('hidden');
         lessonView.classList.remove('hidden');
@@ -62,7 +233,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const html = await response.text();
 
-            // Parse and Inject
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
@@ -72,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (navContent) lessonNav.innerHTML = navContent.innerHTML;
             if (bodyContent) lessonContent.innerHTML = bodyContent.innerHTML;
 
-            // Re-initialize all dynamic UI elements
             initLessonUI();
 
         } catch (error) {
@@ -85,14 +254,13 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardView.classList.remove('hidden');
         lessonView.classList.add('hidden');
         window.scrollTo(0, 0);
-        currentLessonId = null;
+        window.currentLessonId = null;
+
+        // Reset progress bar
+        if (progressBar) progressBar.style.width = '0%';
     };
 
-    /**
-     * Initializes UI elements and event listeners after a lesson is loaded.
-     */
     function initLessonUI() {
-        // Collect new dynamic elements
         ui = {
             sections: document.querySelectorAll('.scroll-section'),
             navLinks: document.querySelectorAll('.nav-link'),
@@ -106,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
             debateSelect: document.getElementById('debate-statement')
         };
 
-        // Initialize components
         if (ui.varkQuizContainer) {
             ui.varkQuizContainer.innerHTML = '';
             initQuiz();
@@ -133,9 +300,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (option) {
                 // If it's a quiz question (radio-like behavior)
                 const container = option.parentElement;
-                if (container.id === 'quiz-questions' || container.id === 'feedback-analysis-quiz') {
-                    // For VARK, we keep selection. For feedback analysis, let's allow multiple or single?
-                    // The doc says "Válassza ki az igaz kijelentéseket" (plural), so multiple.
+                if (container.id === 'quiz-questions' || container.id === 'feedback-analysis-quiz' || container.id === 'l2-feedback-quiz') {
+                    // For VARK, we keep selection. For feedback analysis in L2 full content, it allows multiple.
                     option.classList.toggle('selected');
                 } else if (container.classList.contains('vark-options')) {
                     option.classList.toggle('selected');
@@ -143,8 +309,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Auto-save quiz state
                 const selected = Array.from(container.querySelectorAll('.vark-option.selected')).map(opt => opt.dataset.val);
-                saveData(`${currentLessonId}_quiz_${container.id}`, selected.join(','));
+                saveData(`${window.currentLessonId}_quiz_${container.id}`, selected.join(','));
             }
+
+            // Interactive Table Row Selection (Autonomy)
+            const tableRow = e.target.closest('.interactive-table tr');
+            if (tableRow && tableRow.parentElement.tagName === 'TBODY') {
+                const tbody = tableRow.parentElement;
+                // Toggle selection
+                tableRow.classList.toggle('selected-row');
+
+                // Save state: get indices of selected rows
+                const selectedIndices = [];
+                Array.from(tbody.children).forEach((row, index) => {
+                    if (row.classList.contains('selected-row')) {
+                        selectedIndices.push(index);
+                    }
+                });
+                saveData(`${window.currentLessonId}_table_${tbody.id}`, selectedIndices.join(','));
+            }
+        });
+
+        // Behavior Table Radio Buttons (Relatedness)
+        const radioInputs = document.querySelectorAll('.behavior-table input[type="radio"]');
+        radioInputs.forEach(radio => {
+            radio.addEventListener('change', () => {
+                // Save all radio states for this table
+                const table = radio.closest('table');
+                if (table) {
+                    const radios = table.querySelectorAll('input[type="radio"]:checked');
+                    const radioState = {};
+                    radios.forEach(r => {
+                        radioState[r.name] = r.value;
+                    });
+                    saveData(`${window.currentLessonId}_radios_behavior`, radioState);
+                }
+            });
+        });
+
+        // Select inputs (Final Quiz)
+        const selects = document.querySelectorAll('select.reflection-input');
+        selects.forEach(select => {
+            select.addEventListener('change', () => {
+                saveData(select.id, select.value);
+                updateSummary();
+            });
         });
 
         // VARK Submit (Specific for Lesson 1)
@@ -189,33 +398,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 saveData(ui.debateSelect.id, ui.debateSelect.value);
             });
         }
-
-        // Download Summary
-        if (ui.downloadBtn) {
-            ui.downloadBtn.addEventListener('click', () => {
-                const text = updateSummary();
-                const filename = `pedpilots_l${currentLessonId}_osszegzes.txt`;
-                const encodedText = encodeURIComponent(text);
-                const dataUri = 'data:text/plain;charset=utf-8,\ufeff' + encodedText;
-
-                const a = document.createElement('a');
-                a.setAttribute('href', dataUri);
-                a.setAttribute('download', filename);
-                a.style.display = 'none';
-                document.body.appendChild(a);
-
-                try {
-                    a.click();
-                } catch (e) {
-                    console.error("Download failed", e);
-                    alert("A letöltés nem indult el automatikusan. Kérjük, használja a fenti szövegdobozt a másoláshoz!");
-                }
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                }, 100);
-            });
-        }
     }
+
 
     // --- Static Event Listeners ---
     window.addEventListener('scroll', () => {
@@ -242,6 +426,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.remove('active');
                 if (link.getAttribute('href').includes(current)) {
                     link.classList.add('active');
+                    // Auto-scroll sidebar to keep active link in view
+                    if (window.innerWidth > 768) { // Only on desktop
+                        link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
                 }
             });
         }
@@ -314,14 +502,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Persistence ---
     function saveData(key, value) {
-        if (!currentLessonId) return;
-        const prefix = `pedpilots_l${currentLessonId}_`;
+        if (!window.currentLessonId) return;
+        const prefix = `pedpilots_l${window.currentLessonId}_`;
         localStorage.setItem(prefix + key, JSON.stringify(value));
     }
 
     function loadProgress() {
-        if (!currentLessonId) return;
-        const prefix = `pedpilots_l${currentLessonId}_`;
+        if (!window.currentLessonId) return;
+        const prefix = `pedpilots_l${window.currentLessonId}_`;
 
         // Load all reflection inputs
         ui.reflectionInputs.forEach(input => {
@@ -354,10 +542,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Load Quiz States
-        const quizContainers = document.querySelectorAll('.vark-options, #quiz-questions, #feedback-analysis-quiz');
+        const quizContainers = document.querySelectorAll('.vark-options, #quiz-questions, #feedback-analysis-quiz, #l2-feedback-quiz');
         quizContainers.forEach(container => {
-            const val = localStorage.getItem(prefix + `${currentLessonId}_quiz_${container.id}`);
+            const val = localStorage.getItem(prefix + `${window.currentLessonId}_quiz_${container.id}`);
             if (val) {
                 try {
                     const selectedVals = JSON.parse(val).split(',');
@@ -367,6 +554,51 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 } catch (e) {
                     console.error("Error loading quiz state", e);
+                }
+            }
+        });
+
+        // Load Interactive Tables (Autonomy)
+        const tables = document.querySelectorAll('.interactive-table tbody');
+        tables.forEach(tbody => {
+            const val = localStorage.getItem(prefix + `${window.currentLessonId}_table_${tbody.id}`);
+            if (val) {
+                try {
+                    const selectedIndices = val.split(',').map(Number);
+                    selectedIndices.forEach(idx => {
+                        if (tbody.children[idx]) {
+                            tbody.children[idx].classList.add('selected-row');
+                        }
+                    });
+                } catch (e) {
+                    console.error("Error loading table state", e);
+                }
+            }
+        });
+
+        // Load Radio Tables (Relatedness)
+        const valRadios = localStorage.getItem(prefix + `${window.currentLessonId}_radios_behavior`);
+        if (valRadios) {
+            try {
+                const radioState = JSON.parse(valRadios);
+                for (const [name, value] of Object.entries(radioState)) {
+                    const radio = document.querySelector(`.behavior-table input[name="${name}"][value="${value}"]`);
+                    if (radio) radio.checked = true;
+                }
+            } catch (e) {
+                console.error("Error loading radio state", e);
+            }
+        }
+
+        // Load Selects
+        const selects = document.querySelectorAll('select.reflection-input');
+        selects.forEach(select => {
+            const val = localStorage.getItem(prefix + select.id);
+            if (val) {
+                try {
+                    select.value = JSON.parse(val);
+                } catch (e) {
+                    select.value = val;
                 }
             }
         });
@@ -398,106 +630,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Summary & Download ---
     // --- Summary & Download ---
-    function updateSummary() {
-        const summaryDisplay = document.getElementById('summary-display');
-        if (!summaryDisplay) return "";
 
-        const prefix = `pedpilots_l${currentLessonId}_`;
-        let summaryText = `PEDPILOTS - ${currentLessonId}. TANULÁSI MODUL ÖSSZEGZÉS\n`;
-        summaryText += "=========================================================\n\n";
 
-        // Collect all reflection inputs and sliders from the current page
-        const inputs = document.querySelectorAll('.reflection-input, .slider, #motivation-scale');
 
-        inputs.forEach(input => {
-            const label = getLabelForId(input.id);
-            const value = localStorage.getItem(prefix + input.id);
-            if (value) {
-                let parsed;
-                try {
-                    parsed = JSON.parse(value);
-                } catch (e) {
-                    parsed = value;
-                }
-                summaryText += `${label}: ${parsed}\n`;
-            }
-        });
 
-        // Also add quiz results if any (generic)
-        const quizContainers = document.querySelectorAll('.vark-options, #quiz-questions, #feedback-analysis-quiz');
-        quizContainers.forEach(container => {
-            const val = localStorage.getItem(prefix + `${currentLessonId}_quiz_${container.id}`);
-            if (val) {
-                try {
-                    const selected = JSON.parse(val);
-                    summaryText += `Interaktív feladat (${container.id}): ${selected}\n`;
-                } catch (e) { }
-            }
-        });
-
-        summaryText += "\n";
-
-        // Legacy Vark Result for L1
-        if (currentLessonId === 1) {
-            const varkSaved = localStorage.getItem(prefix + 'vark-scores');
-            if (varkSaved) {
-                const parsed = JSON.parse(varkSaved);
-                summaryText += `VARK Eredmény: V:${parsed.a}, R:${parsed.b}, A:${parsed.c}, K:${parsed.d}\n`;
-            }
-        }
-
-        summaryDisplay.innerHTML = `
-            <div class="summary-box">
-                <p>Az Ön válaszai rögzítésre kerültek. Ha az automatikus letöltés nem sikerülne, innen is kimásolhatja az adatokat:</p>
-                <textarea id="manual-summary-copy" readonly class="reflection-input" style="height: 200px; font-family: monospace; font-size: 0.9rem; background: #fdfdfd; border: 1px solid var(--secondary-color);">${summaryText}</textarea>
-            </div>
-        `;
-
-        return summaryText;
-    }
-
-    function getLabelForId(id) {
-        const labels = {
-            'reflection-1': 'Három kulcsszó',
-            'reflection-1b': 'Választás indoklása',
-            'reflection-1c': 'Mit árulnak el?',
-            'motivation': 'Motivációs szint (1-10)',
-            'reflection-2': 'Támogató tényezők',
-            'reflection-3': 'Akadályozó tényezők',
-            'debate-statement': 'Vita-állítás',
-            'debate-for': 'Támogató érv',
-            'debate-against': 'Ellenző érv',
-            'mirror-1': 'Sikerélmény leírása',
-            'mirror-2': 'Nehézség leírása',
-            'vark-scores': 'VARK Teszt Pontszámok',
-            'situation-1': 'Helyzet 1 (Matek feladás)',
-            'situation-2': 'Helyzet 2 (Kolléga ellenállása)',
-            'situation-3': 'Helyzet 3 (Nincs tehetségem)',
-            'situation-4': 'Helyzet 4 (Szülői vélemény)',
-            'situation-5': 'Helyzet 5 (Félelem a hibától)',
-            'action-1': 'Fejlődési cél',
-            'action-2': 'Hiba-menedzsment',
-            'action-3': 'Mondat a diákoknak',
-            'action-4': 'Konkrét változtatás',
-            'final-1': 'Záró reflexió a tanulásról',
-            'final-2': 'Még nem tudom, de...',
-            'affirmation': 'Megerősítő mondat'
-        };
-        return labels[id] || id;
-    }
-
-    window.resetPedPilotsData = function () {
-        if (!currentLessonId) return;
-        const prefix = `pedpilots_l${currentLessonId}_`;
-        if (confirm('Biztosan törölni szeretne minden elmentett választ ebből a modulból? Ez a művelet nem vonható vissza.')) {
-            for (let i = localStorage.length - 1; i >= 0; i--) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith(prefix)) {
-                    localStorage.removeItem(key);
-                }
-            }
-            alert('Adatok törölve ebből a modulból.');
-            loadProgress();
+    // Module 2 Hint Logic
+    window.showFeedbackHint = function () {
+        const hint = document.getElementById('feedback-hint');
+        if (hint) {
+            hint.classList.toggle('show');
         }
     };
+
+    // Global Reset Function
+    // Global Download Function
+
+
+    // Global Reset Function
+
 });

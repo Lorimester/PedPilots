@@ -129,6 +129,7 @@ p {
     flex-direction: column;
     z-index: 1000;
     transition: var(--transition);
+    overflow-y: auto;
 }
 
 .sidebar-header {
