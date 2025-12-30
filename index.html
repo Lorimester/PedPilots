@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Önismeret és Fejlődő Gondolkodásmód</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <!-- Dashboard View -->
+    <div id="dashboard-view">
+        <div class="dashboard-container">
+            <header class="dashboard-header">
+                <div class="brand-header">
+                    <img src="assets/brand-header.jpg" alt="PedPilots Brand Header" class="header-img">
+                </div>
+            </header>
+
+            <h1>PedPilots Modulok</h1>
+            <p class="subtitle">Válasszon egy tanulási egységet az induláshoz!</p>
+
+            <div class="lesson-grid">
+                <!-- Lesson 1 -->
+                <div class="lesson-card active" onclick="loadLesson(1)">
+                    <div class="lesson-number">1</div>
+                    <div class="lesson-info">
+                        <h3>Önismeret és szemléletmód</h3>
+                        <p>Fedezze fel saját tanulási stílusát és a fejlődő gondolkodásmód erejét.</p>
+                    </div>
+                </div>
+
+                <!-- Placeholder Lessons 2-9 -->
+                <!-- Modul 2 -->
+                <div class="lesson-card active" onclick="loadLesson(2)">
+                    <div class="lesson-number">2</div>
+                    <div class="lesson-info">
+                        <h3>MotivOn – Motiváció bekapcsolva!</h3>
+                        <p>Fedezze fel a belső tűz felébresztésének és fenntartásának titkait.</p>
+                    </div>
+                </div>
+                <div class="lesson-card locked">
+                    <div class="lesson-number">3</div>
+                    <div class="lesson-info">
+                        <h3>Hamarosan...</h3>
+                        <p>Következő tanulási modul.</p>
+                    </div>
+                </div>
+                <div class="lesson-card locked">
+                    <div class="lesson-number">4</div>
+                    <div class="lesson-info">
+                        <h3>Hamarosan...</h3>
+                        <p>Következő tanulási modul.</p>
+                    </div>
+                </div>
+                <div class="lesson-card locked">
+                    <div class="lesson-number">5</div>
+                    <div class="lesson-info">
+                        <h3>Hamarosan...</h3>
+                        <p>Következő tanulási modul.</p>
+                    </div>
+                </div>
+                <div class="lesson-card locked">
+                    <div class="lesson-number">6</div>
+                    <div class="lesson-info">
+                        <h3>Hamarosan...</h3>
+                        <p>Következő tanulási modul.</p>
+                    </div>
+                </div>
+                <div class="lesson-card locked">
+                    <div class="lesson-number">7</div>
+                    <div class="lesson-info">
+                        <h3>Hamarosan...</h3>
+                        <p>Következő tanulási modul.</p>
+                    </div>
+                </div>
+                <div class="lesson-card locked">
+                    <div class="lesson-number">8</div>
+                    <div class="lesson-info">
+                        <h3>Hamarosan...</h3>
+                        <p>Következő tanulási modul.</p>
+                    </div>
+                </div>
+                <div class="lesson-card locked">
+                    <div class="lesson-number">9</div>
+                    <div class="lesson-info">
+                        <h3>Hamarosan...</h3>
+                        <p>Következő tanulási modul.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="lesson-view" class="hidden">
+        <button id="back-to-dashboard" class="btn secondary" onclick="showDashboard()">
+            <span class="icon">←</span> Vissza a modulokhoz
+        </button>
+
+        <div class="app-container">
+            <nav class="sidebar">
+                <div class="sidebar-header">
+                    <h2>PedPilots</h2>
+                </div>
+                <ul id="lesson-nav">
+                    <!-- Nav links will be injected dynamically -->
+                </ul>
+            </nav>
+
+            <main class="content">
+                <header class="brand-header">
+                    <img src="assets/brand-header.jpg" alt="PedPilots Brand Header" class="header-img">
+                </header>
+
+                <div id="lesson-content">
+                    <!-- Lesson content will be loaded here via fetch -->
+                    <div class="loading-spinner">Munkamenet betöltése...</div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Toggle (only visible in lesson view via CSS) -->
+    <button id="mobile-menu-toggle">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div id="progress-bar-container">
+        <div id="progress-bar"></div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+
+</html>
