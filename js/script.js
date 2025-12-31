@@ -253,6 +253,11 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showDashboard = function () {
         dashboardView.classList.remove('hidden');
         lessonView.classList.add('hidden');
+
+        // Reset mobile menu state
+        if (sidebar) sidebar.classList.remove('open');
+        if (mobileMenuToggle) mobileMenuToggle.classList.remove('active');
+
         window.scrollTo(0, 0);
         window.currentLessonId = null;
 
@@ -262,8 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function initLessonUI() {
         ui = {
-            sections: document.querySelectorAll('.scroll-section'),
             navLinks: document.querySelectorAll('.nav-link'),
+            sections: [], // Will be populated below
             motivationSlider: document.getElementById('motivation-scale'),
             rangeValue: document.getElementById('range-value'),
             reflectionInputs: document.querySelectorAll('.reflection-input'),
@@ -273,6 +278,14 @@ document.addEventListener('DOMContentLoaded', () => {
             downloadBtn: document.getElementById('download-summary'),
             debateSelect: document.getElementById('debate-statement')
         };
+
+        // Populate sections based on current navigation links to ensure accurate scroll-spy
+        const navIds = Array.from(ui.navLinks).map(link => {
+            const href = link.getAttribute('href');
+            return href && href.startsWith('#') ? href.substring(1) : null;
+        }).filter(Boolean);
+        ui.sections = Array.from(document.querySelectorAll('[id]')).filter(el => navIds.includes(el.id));
+
 
         if (ui.varkQuizContainer) {
             ui.varkQuizContainer.innerHTML = '';
@@ -292,42 +305,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     mobileMenuToggle.classList.remove('active');
                 }
             });
-        });
-
-        // Generic Option Selection (Interactive elements)
-        document.addEventListener('click', (e) => {
-            const option = e.target.closest('.vark-option');
-            if (option) {
-                // If it's a quiz question (radio-like behavior)
-                const container = option.parentElement;
-                if (container.id === 'quiz-questions' || container.id === 'feedback-analysis-quiz' || container.id === 'l2-feedback-quiz') {
-                    // For VARK, we keep selection. For feedback analysis in L2 full content, it allows multiple.
-                    option.classList.toggle('selected');
-                } else if (container.classList.contains('vark-options')) {
-                    option.classList.toggle('selected');
-                }
-
-                // Auto-save quiz state
-                const selected = Array.from(container.querySelectorAll('.vark-option.selected')).map(opt => opt.dataset.val);
-                saveData(`${window.currentLessonId}_quiz_${container.id}`, selected.join(','));
-            }
-
-            // Interactive Table Row Selection (Autonomy)
-            const tableRow = e.target.closest('.interactive-table tr');
-            if (tableRow && tableRow.parentElement.tagName === 'TBODY') {
-                const tbody = tableRow.parentElement;
-                // Toggle selection
-                tableRow.classList.toggle('selected-row');
-
-                // Save state: get indices of selected rows
-                const selectedIndices = [];
-                Array.from(tbody.children).forEach((row, index) => {
-                    if (row.classList.contains('selected-row')) {
-                        selectedIndices.push(index);
-                    }
-                });
-                saveData(`${window.currentLessonId}_table_${tbody.id}`, selectedIndices.join(','));
-            }
         });
 
         // Behavior Table Radio Buttons (Relatedness)
@@ -400,6 +377,80 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Global Click Delegeted Listeners ---
+    document.addEventListener('click', (e) => {
+        // 1. Generic Option Selection (Interactive elements)
+        const option = e.target.closest('.vark-option');
+        if (option) {
+            const container = option.parentElement;
+
+            // Radio-like behavior for VARK questions
+            if (container.id === 'quiz-questions' || container.id === 'vark-quiz-container' || container.classList.contains('vark-options') && container.closest('.vark-question')) {
+                const siblings = container.querySelectorAll('.vark-option');
+                siblings.forEach(s => s.classList.remove('selected'));
+                option.classList.add('selected');
+            } else {
+                // Toggle behavior for other quizzes (e.g. feedback analysis)
+                option.classList.toggle('selected');
+            }
+
+            // Auto-save quiz state
+            const selected = Array.from(container.querySelectorAll('.vark-option.selected')).map(opt => opt.dataset.val);
+            saveData(`${window.currentLessonId}_quiz_${container.id || 'vark'}`, selected.join(','));
+        }
+
+        // 2. Interactive Table Cell Selection (Autonomy)
+        const tableCell = e.target.closest('.selectable-cell');
+        if (tableCell) {
+            const isAlreadySelected = tableCell.classList.contains('selected-cell');
+            const row = tableCell.closest('tr');
+            // Deselect other cells in the same row
+            row.querySelectorAll('.selectable-cell').forEach(c => c.classList.remove('selected-cell'));
+
+            // Toggle if it wasn't already selected
+            if (!isAlreadySelected) {
+                tableCell.classList.add('selected-cell');
+            }
+
+            const tbody = tableCell.closest('tbody');
+            // Save state
+            const selectedCells = [];
+            const rows = Array.from(tbody.children);
+            rows.forEach((row, rIndex) => {
+                Array.from(row.children).forEach((cell, cIndex) => {
+                    if (cell.classList.contains('selected-cell')) {
+                        selectedCells.push(`${rIndex}_${cIndex}`);
+                    }
+                });
+            });
+            saveData(`${window.currentLessonId}_table_cells_${tbody.id}`, selectedCells.join(','));
+        }
+
+        // 3. Accordion Logic
+        const header = e.target.closest('.accordion-header');
+        if (header) {
+            const item = header.parentElement;
+            const allItems = item.parentElement.querySelectorAll('.accordion-item');
+
+            // Optional: Close other items
+            allItems.forEach(i => {
+                if (i !== item) {
+                    i.classList.remove('active');
+                    const c = i.querySelector('.accordion-content');
+                    if (c) c.style.maxHeight = null;
+                }
+            });
+
+            item.classList.toggle('active');
+            const content = item.querySelector('.accordion-content');
+            if (item.classList.contains('active')) {
+                content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+                content.style.maxHeight = null;
+            }
+        }
+    });
+
 
     // --- Static Event Listeners ---
     window.addEventListener('scroll', () => {
@@ -414,17 +465,26 @@ document.addEventListener('DOMContentLoaded', () => {
         let current = "";
         if (ui.sections) {
             ui.sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                if (window.scrollY >= (sectionTop - 150)) {
-                    current = section.getAttribute('id');
+                const rect = section.getBoundingClientRect();
+                const sectionTop = rect.top + window.scrollY;
+                if (window.scrollY >= (sectionTop - 160)) {
+                    const id = section.getAttribute('id');
+                    if (id) current = id;
                 }
             });
         }
 
-        if (ui.navLinks) {
+        // Force last section if at bottom
+        if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 50) {
+            if (ui.sections && ui.sections.length > 0) {
+                current = ui.sections[ui.sections.length - 1].id;
+            }
+        }
+
+        if (ui.navLinks && current) {
             ui.navLinks.forEach(link => {
                 link.classList.remove('active');
-                if (link.getAttribute('href').includes(current)) {
+                if (link.getAttribute('href') === '#' + current) {
                     link.classList.add('active');
                     // Auto-scroll sidebar to keep active link in view
                     if (window.innerWidth > 768) { // Only on desktop
@@ -457,16 +517,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             ui.varkQuizContainer.appendChild(qDiv);
-        });
-
-        // Option selection
-        ui.varkQuizContainer.addEventListener('click', (e) => {
-            const option = e.target.closest('.vark-option');
-            if (!option) return;
-
-            const siblings = option.parentElement.querySelectorAll('.vark-option');
-            siblings.forEach(s => s.classList.remove('selected'));
-            option.classList.add('selected');
         });
     }
 
@@ -558,20 +608,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Load Interactive Tables (Autonomy)
+        // Load Interactive Tables (Autonomy - Cells)
         const tables = document.querySelectorAll('.interactive-table tbody');
         tables.forEach(tbody => {
-            const val = localStorage.getItem(prefix + `${window.currentLessonId}_table_${tbody.id}`);
+            const key = `${window.currentLessonId}_table_cells_${tbody.id}`;
+            const val = localStorage.getItem(prefix + key);
             if (val) {
                 try {
-                    const selectedIndices = val.split(',').map(Number);
-                    selectedIndices.forEach(idx => {
-                        if (tbody.children[idx]) {
-                            tbody.children[idx].classList.add('selected-row');
+                    const indices = val.split(',');
+                    indices.forEach(idx => {
+                        const [r, c] = idx.split('_').map(Number);
+                        if (tbody.children[r] && tbody.children[r].children[c]) {
+                            tbody.children[r].children[c].classList.add('selected-cell');
                         }
                     });
                 } catch (e) {
-                    console.error("Error loading table state", e);
+                    console.error("Error loading table cell state", e);
                 }
             }
         });
@@ -634,18 +686,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-    // Module 2 Hint Logic
-    window.showFeedbackHint = function () {
-        const hint = document.getElementById('feedback-hint');
+    // Module 2 Hint Logic - Generic function for toggling hints and adjusting accordion height
+    window.showHint = function (hintId) {
+        const hint = document.getElementById(hintId);
         if (hint) {
             hint.classList.toggle('show');
+
+            // Recalculate accordion height if hint is inside one
+            const accordionContent = hint.closest('.accordion-content');
+            if (accordionContent && accordionContent.style.maxHeight) {
+                // Using a small timeout to ensure the 'show' class transition/display is accounted for
+                setTimeout(() => {
+                    accordionContent.style.maxHeight = accordionContent.scrollHeight + "px";
+                }, 50);
+            }
         }
+    };
+
+    // Legacy support for older calls (if any)
+    window.showFeedbackHint = function () {
+        showHint('feedback-hint');
     };
 
     // Global Reset Function
     // Global Download Function
 
 
-    // Global Reset Function
 
 });
