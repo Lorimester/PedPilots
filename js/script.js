@@ -53,12 +53,188 @@ window.resetPedPilotsData = function () {
 };
 
 window.checkSolutions = function () {
-    alert('Megoldások:\n1.R - Rögzült\n2.R - Rögzült\n3.F - Fejlődő\n4.F - Fejlődő\n5.R - Rögzült\n6.F - Fejlődő\n7.R - Rögzült\n8.F - Fejlődő\n9.R - Rögzült\n10.F - Fejlődő');
+    const solutionsDiv = document.getElementById('mindset-quiz-solutions');
+
+    // Correct answers based on the text
+    const answers = {
+        'quiz-q1': 'R', 'quiz-q2': 'R', 'quiz-q3': 'F', 'quiz-q4': 'F',
+        'quiz-q5': 'R', 'quiz-q6': 'F', 'quiz-q7': 'R', 'quiz-q8': 'F',
+        'quiz-q9': 'R', 'quiz-q10': 'F'
+    };
+
+    if (solutionsDiv && solutionsDiv.style.display !== 'none') {
+        // Hide solutions
+        solutionsDiv.style.display = 'none';
+
+        // Remove highlights
+        for (const id of Object.keys(answers)) {
+            const select = document.getElementById(id);
+            if (select) {
+                select.style.border = ""; // Reset border
+                select.style.backgroundColor = ""; // Reset background
+                select.classList.remove('correct', 'incorrect');
+            }
+        }
+    } else {
+        // Show solutions
+        if (solutionsDiv) {
+            solutionsDiv.style.display = 'block';
+            solutionsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Highlight inputs
+        for (const [id, correctVal] of Object.entries(answers)) {
+            const select = document.getElementById(id);
+            if (select) {
+                if (select.value === correctVal) {
+                    select.style.border = "2px solid #4CAF50"; // Green for correct
+                    select.style.backgroundColor = "#e8f5e9";
+                } else if (select.value !== "") {
+                    select.style.border = "2px solid #F44336"; // Red for incorrect
+                    select.style.backgroundColor = "#ffebee";
+                } else {
+                    select.style.border = "1px solid #ddd"; // Reset info
+                    select.style.backgroundColor = "#fff";
+                }
+            }
+        }
+    }
+};
+
+window.checkLesson2Solutions = function () {
+    const solutionsDiv = document.getElementById('l2-quiz-solutions');
+
+    // Correct answers
+    const answers = {
+        'l2-quiz-2-1': 'b', // szorongás
+        'l2-quiz-1-1': 'C', // Biztatás -> Verbális meggyőzés
+        'l2-quiz-1-2': 'D', // Nyugalom -> Fiziológiai állapot
+        'l2-quiz-1-3': 'A', // Sikerélmény -> Közvetlen siker
+        'l2-quiz-1-4': 'B', // Mások sikere -> Helyettes tapasztalat
+        'l2-quiz-2-1': 'b', // szorongás (magas kihívás, alacsony komp)
+        'l2-quiz-2-2': 'a', // unalom (alacsony kihívás, magas komp)
+        'l2-quiz-3': 'b',   // közösség csökkenti a stresszt
+        'l2-quiz-4-1': 'D', // Remegő kéz -> Fiziológiai
+        'l2-quiz-4-2': 'B', // Zsolti példája -> Helyettes
+        'l2-quiz-4-3': 'A', // Múlt heti siker -> Közvetlen
+        'l2-quiz-4-4': 'C', // "Hiszek benned" -> Verbális
+        'l2-quiz-5-1': 'I', // Igaz
+        'l2-quiz-5-2': 'H'  // Hamis
+    };
+
+    let allCorrect = true;
+
+    // Highlight inputs
+    for (const [id, correctVal] of Object.entries(answers)) {
+        const select = document.getElementById(id);
+        if (select) {
+            if (select.value === correctVal) {
+                select.style.border = "2px solid #4CAF50";
+                select.style.backgroundColor = "#e8f5e9";
+            } else {
+                select.style.border = "2px solid #F44336";
+                select.style.backgroundColor = "#ffebee";
+                allCorrect = false;
+            }
+        }
+    }
+
+    // Check Relatedness Quiz (Radio buttons)
+    const relatednessAnswers = {
+        'l2-rel-q1': 'hamper',  // Csak előad
+        'l2-rel-q2': 'support', // Név szerint
+        'l2-rel-q3': 'hamper',  // Megszégyenítés
+        'l2-rel-q4': 'support', // Kiscsoport
+        'l2-rel-q5': 'support', // Saját hibák
+        'l2-rel-q6': 'hamper',  // Verseny
+        'l2-rel-q7': 'support', // Érdeklődés
+        'l2-rel-q8': 'hamper'   // Csak hallgat
+    };
+
+    let relatednessCorrect = true;
+    for (const [name, correctVal] of Object.entries(relatednessAnswers)) {
+        const selected = document.querySelector(`input[name="${name}"]:checked`);
+        const inputs = document.querySelectorAll(`input[name="${name}"]`);
+
+        // Reset styles first
+        inputs.forEach(input => {
+            const parentTd = input.parentElement;
+            if (parentTd) parentTd.style.backgroundColor = "";
+        });
+
+        if (selected) {
+            if (selected.value === correctVal) {
+                // Good
+                const parentTd = selected.parentElement;
+                if (parentTd) parentTd.style.backgroundColor = "#e8f5e9";
+            } else {
+                // Bad
+                const parentTd = selected.parentElement;
+                if (parentTd) parentTd.style.backgroundColor = "#ffebee";
+                relatednessCorrect = false;
+                allCorrect = false;
+            }
+        } else {
+            relatednessCorrect = false; // Not answered
+        }
+    }
+
+    const relFeedback = document.getElementById('l2-rel-feedback');
+    if (relFeedback) {
+        if (relatednessCorrect) {
+            relFeedback.style.display = 'block';
+            relFeedback.textContent = 'Minden választ helyesen jelölt meg!';
+            relFeedback.style.color = 'var(--success-color)';
+        } else {
+            relFeedback.style.display = 'block';
+            relFeedback.textContent = 'Van még hibás vagy hiányzó válasz.';
+            relFeedback.style.color = '#F44336';
+        }
+    }
+
+
+    if (solutionsDiv) {
+        solutionsDiv.style.display = 'block';
+        solutionsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 };
 
 // --- Helper Functions used by globals ---
 function getLabelForId(id) {
     const labels = {
+        // Lesson 6 Reflective Inputs
+        'l6-reflection-1': 'Szakmai kihívás és megoldás',
+        'l6-plan-goal': 'Fejlődési terv: 1. Célkitűzés',
+        'l6-plan-method': 'Fejlődési terv: 2. Stratégia',
+        'l6-plan-collab': 'Fejlődési terv: 3. Társas támogatás',
+        'l6-plan-obstacle': 'Fejlődési terv: 4. Akadályok',
+        'l6-plan-success': 'Fejlődési terv: 5. Siker kritériumai',
+
+        'rah-learning-moment': 'Ráhangolódás: "Most valóban tanulok"',
+        'rah-helpers': 'Ráhangolódás: Segítő tényezők',
+        'rah-blockers': 'Ráhangolódás: Gátló tényezők',
+        'rah-emotions': 'Ráhangolódás: Érzelmek',
+        'rah-insight': 'Ráhangolódás: Tanulság',
+
+        'focus-strength': 'Önszabályozás: Erősség',
+        'focus-weakness': 'Önszabályozás: Fejlesztendő',
+
+        'map-green': 'Tanulási Térkép: Jól teljesítek',
+        'map-red': 'Tanulási Térkép: Elakadok',
+        'map-yellow': 'Tanulási Térkép: Motivál',
+        'map-blue': 'Tanulási Térkép: Segíthetne',
+        'map-focus': 'Tanulási Térkép: Fókuszpont',
+
+        'pyr-lvl1': 'Célpiramis: 1. Fő cél',
+        'pyr-lvl2': 'Célpiramis: 2. Motiváció',
+        'pyr-lvl3': 'Célpiramis: 3. Szokások',
+        'pyr-lvl4': 'Célpiramis: 4. Alapszint',
+        'pyr-reflex': 'Célpiramis: Záró reflexió',
+
+        'monitor-own-questions': 'Monitorozás: Saját kérdések',
+        'monitor-logistics': 'Monitorozás: Hely és idő',
+        'monitor-commitment': 'Monitorozás: Segítő tényezők',
+
         'reflection-1': 'Három kulcsszó',
         'reflection-1b': 'Választás indoklása',
         'reflection-1c': 'Mit árulnak el?',
@@ -84,28 +260,136 @@ function getLabelForId(id) {
         'final-2': 'Még nem tudom, de...',
         'affirmation': 'Megerősítő mondat',
         // Module 2
-        'reflection-l2-q1': 'Mikor tanul a legszívesebben?',
-        'reflection-l2-internalization': 'Internalizáció (Amit régen nem kedvelt)',
-        'autonomy-high': 'Magas autonómia példa',
-        'autonomy-low': 'Alacsony autonómia példa',
-        'autonomy-reflection-feelings': 'Autonómia érzések és hatás',
-        'feedback-rewrite-full': 'Visszajelzés átírása',
-        'flow-zone-selection': 'Flow-zóna ütemezés',
-        'volition-plans': 'Akarati tervek (Ha... akkor...)',
-        'scale-l2-autonomy': 'Szükséglet: Autonómia (1-5)',
-        'scale-l2-competence': 'Szükséglet: Kompetencia (1-5)',
-        'scale-l2-relatedness': 'Szükséglet: Kapcsolódás (1-5)',
-        'reflection-l2-perseverance': 'Kitartás példa (Volíció)',
-        'scaffold-step-1': 'Scaffolding 1. lépés',
-        'scaffold-step-2': 'Scaffolding 2. lépés',
-        'scaffold-step-3': 'Scaffolding 3. lépés',
-        'scaffold-step-4': 'Scaffolding 4. lépés',
-        'scaffold-step-5': 'Scaffolding 5. lépés',
-        'match-results': 'Párosítás (Ellenőrzés 1)',
-        'emotion-1': 'Érzelem (Magas kihívás, alacsony komp.)',
-        'emotion-2': 'Érzelem (Alacsony kihívás, magas kép.)',
-        'source-1': 'Forrás (Zsolti példája)',
-        'source-2': 'Forrás (Múlt heti siker)'
+        'l2-internalization': 'Internalizáció (Amit régen nem kedvelt)',
+        'l2-autonomy-high': 'Magas autonómia példa',
+        'l2-autonomy-low': 'Alacsony autonómia példa',
+        'l2-autonomy-reflection-feelings': 'Autonómia: Érzések és hatások',
+        'l2-needs-autonomy': 'Szükséglet: Autonómia (1-5)',
+        'l2-needs-competence': 'Szükséglet: Kompetencia (1-5)',
+        'l2-needs-relatedness': 'Szükséglet: Kapcsolódás (1-5)',
+        'l2-feedback_rewrite': 'Visszajelzés átírása',
+        'l2-flow-zone': 'Flow-zóna ütemezés',
+        'l2-volition-plan': 'Akarati tervek (Ha... akkor...)',
+        'l2-needs-scale': 'Szükségletek teljesülése (1-5)',
+        'l2-persistence-strategy': 'Kitartás: Stratégiák',
+        'l2-persistence-goal': 'Kitartás: Célok szerepe',
+        'l2-scaffolding-1': 'Scaffolding 1. lépés',
+        'l2-scaffolding-2': 'Scaffolding 2. lépés',
+        'l2-scaffolding-3': 'Scaffolding 3. lépés',
+        'l2-scaffolding-4': 'Scaffolding 4. lépés',
+        'l2-scaffolding-5': 'Scaffolding 5. lépés',
+        'l2-quiz-1-1': 'Párosítás: Biztatás',
+        'l2-quiz-1-2': 'Párosítás: Nyugalom',
+        'l2-quiz-1-3': 'Párosítás: Sikerélmény',
+        'l2-quiz-1-4': 'Párosítás: Mások sikere',
+        'l2-quiz-2-1': 'Érzelem (Magas kihívás, alacsony komp.)',
+        'l2-quiz-2-2': 'Érzelem (Alacsony kihívás, magas kép.)',
+        'l2-quiz-3': 'Kapcsolódás kulcsa',
+        'l2-quiz-4-1': 'Párosítás 2: Remegő kéz',
+        'l2-quiz-4-2': 'Párosítás 2: Zsolti',
+        'l2-quiz-4-3': 'Párosítás 2: Múlt heti siker',
+        'l2-quiz-4-4': 'Párosítás 2: Hiszek benned',
+        'l2-quiz-5-1': 'Érdeklődés célja (I/H)',
+        'l2-quiz-5-2': 'Öndetermináció vs Érdeklődés (I/H)',
+        // Module 3
+        'smart-s': 'SMART S (Konkrét)',
+        'smart-m': 'SMART M (Mérhető)',
+        'smart-a': 'SMART A (Elérhető)',
+        'smart-r': 'SMART R (Releváns)',
+        'smart-t': 'SMART T (Időhöz kötött)',
+        'smart-full': 'Teljes SMART cél',
+        'smart-easy': 'SMART - Legkönnyebb elem',
+        'smart-hard': 'SMART - Legnehezebb elem',
+        'smart-action': 'SMART - Akcióterv a célért',
+        'nlp-1': 'NLP 1. Pozitív cél',
+        'nlp-2': 'NLP 2. Érzékelhetővé tétel',
+        'nlp-3': 'NLP 3. Motiváció/Értékek',
+        'nlp-4': 'NLP 4. Segítő személyek',
+        'nlp-5': 'NLP 5. Akadályok és kezelésük',
+        'nlp-6': 'NLP 6. Időkeret és konkrét lépések',
+        'nlp-7': 'NLP 7. Összhang (Ecology check)',
+        'nlp-8': 'NLP 8. Pozitív vizualizáció',
+        'yesterday-tasks': 'Tegnapi tevékenységek listája',
+        'matrix-q1': 'Eisenhower I. (Fontos és Sürgős)',
+        'matrix-q2': 'Eisenhower II. (Fontos, Nem Sürgős)',
+        'matrix-q3': 'Eisenhower III. (Sürgős, Nem Fontos)',
+        'matrix-q4': 'Eisenhower IV. (Nem Fontos, Nem Sürgős)',
+        'matrix-waste': 'Időrablók azonosítása',
+        'matrix-postpone': 'Halasztott fontos feladatok',
+        'matrix-plan': 'Prioritási terv a jövő hétre',
+        'ideal-day': 'Ideális munkanap ütemezése',
+        'flex-postpone': 'Rugalmasság - Mit tudna halasztani?',
+        'flex-shorten': 'Rugalmasság - Mit rövidíthetne le?',
+        'flex-must': 'Rugalmasság - Mihez ragaszkodna mindenképp?',
+        'flex-help': 'Rugalmasság - Mi segítené a nap kezelhetőségét?',
+        'flex-points': 'Rugalmasság - Pontok, ahol rugalmas tudna maradni',
+        'flex-habits': 'Rugalmasság - Új szokások a rutinhoz',
+        // Module 4
+        'reflection-l4-why': 'L4 - Cél fontossága',
+        'reflection-l4-steps': 'L4 - Megvalósítás lépései',
+        'reflection-l4-resources': 'L4 - Szükséges erőforrások',
+        'reflection-l4-progress': 'L4 - Haladás mérése',
+        'reflection-l4-current-tools': 'L4 - Jelenlegi követési eszközök',
+        'reflection-l4-feedback': 'L4 - Segítő visszajelzési formák',
+        'reflection-l4-monitor-tools': 'L4 - Hatékonyabb monitorozási eszközök',
+        'reflection-l4-effective': 'L4 - Hatékony stratégiák (Reflexió)',
+        'reflection-l4-difficulty': 'L4 - Nehézségek és reakciók (Reflexió)',
+        'reflection-l4-future': 'L4 - Jövőbeni változtatások (Reflexió)',
+        'reflection-l4-growth': 'L4 - Fejlődési területek (Értékelés)',
+        'reflection-l4-strengthen': 'L4 - Kompetenciák erősítése (Értékelés)',
+        'reflection-l4-support': 'L4 - Támogatási igény (Értékelés)',
+        'reflection-l4-modify': 'L4 - Cél módosítása (Újratervezés)',
+        'reflection-l4-new-strategies': 'L4 - Új stratégiák (Újratervezés)',
+        'reflection-l4-impact': 'L4 - Újratervezés hatása',
+        'terkep-1': 'L4 Térkép - 1. Tervezés',
+        'terkep-2': 'L4 Térkép - 2. Monitorozás',
+        'terkep-3': 'L4 Térkép - 3. Reflexió',
+        'terkep-4': 'L4 Térkép - 4. Értékelés',
+        'terkep-5': 'L4 Térkép - 5. Újratervezés',
+        'l4-q4': 'L4 - Fejlődést követő eszköz',
+        'l4-q5': 'L4 - Önszabályozási térkép vázlata',
+        // Module 5
+        'rah-learning-moment': 'L5 - Tanulási pillanat',
+        'rah-helpers': 'L5 - Mi segítette a tanulást?',
+        'rah-blockers': 'L5 - Mi nehezítette a tanulást?',
+        'rah-emotions': 'L5 - Tanulással kapcsolatos érzelmek',
+        'rah-insight': 'L5 - Pedagógusi tanulási mintázat',
+        'focus-strength': 'L5 - Önszabályozási erősség',
+        'focus-weakness': 'L5 - Fejlesztendő terület',
+        'map-green': 'L5 Térkép - Jól teljesítek',
+        'map-red': 'L5 Térkép - Elakadok',
+        'map-yellow': 'L5 Térkép - Motivál',
+        'map-blue': 'L5 Térkép - Segítene',
+        'map-focus': 'L5 Térkép - Fókuszpont',
+        'pyr-lvl1': 'L5 Piramis - 1. Fő cél',
+        'pyr-lvl2': 'L5 Piramis - 2. Motiváció',
+        'pyr-lvl3': 'L5 Piramis - 3. Szokások',
+        'pyr-lvl4': 'L5 Piramis - 4. Akadályok',
+        'pyr-reflex': 'L5 Piramis - Kulcs a sikerhez',
+        'monitor-own-questions': 'L5 - Saját monitorozó kérdések',
+        'monitor-logistics': 'L5 - Monitorozás ideje/helye',
+        'monitor-commitment': 'L5 - Elköteleződés a monitorozás mellett',
+        // Module 7
+        'l7-task-1': 'Fogalmazza meg a különbséget (7. modul)',
+        'l7-task-2': 'Fejleszthető-e osztályteremben? (7. modul)',
+        'l7-task-3': 'Mely módszereket próbálná ki? (7. modul)',
+        // Module 8
+        'l8-task-1': 'Simpleshow videó tapasztalatok (8. modul)',
+        'l8-task-2': 'Book Creator könyv tapasztalatok (8. modul)',
+        'l8-task-3': 'Quiver tapasztalatok (8. modul)',
+
+        // Module 9
+        'l9-task-1': 'Nehézségek értelmezése (9. modul)',
+        'l9-task-2': 'Belső mondatok elakadáskor (9. modul)',
+        'l9-task-3': 'Irányváltás nehézség hatására (9. modul)',
+        'l9-task-4': 'Célok típusa (9. modul)',
+        'l9-task-5': 'Tanulás ideje és koncentráció (9. modul)',
+        'l9-task-6': 'Figyelemelterelő tényezők (9. modul)',
+        'l9-task-7': 'Jellegzetes belső mondat (9. modul)',
+        'l9-task-8': 'Külső nehezítő körülmények (9. modul)',
+        'l9-task-9': 'Változtatások a környezeten (9. modul)',
+        'l9-task-10': 'Legjellemzőbb nehézség (9. modul)',
+        'l9-task-11': 'Apró lépés a jövő hétre (9. modul)'
     };
     return labels[id] || id;
 }
@@ -211,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     window.loadLesson = async function (id) {
-        if (id !== 1 && id !== 2) {
+        if (id !== 1 && id !== 2 && id !== 3 && id !== 4 && id !== 5 && id !== 6 && id !== 7 && id !== 8 && id !== 9) {
             alert("Ez a modul még fejlesztés alatt áll.");
             return;
         }
@@ -534,11 +818,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         desc.innerHTML = `
             <p><strong>Eredmények:</strong></p>
-            <ul>
-                <li>Vizuális: ${scores.a}</li>
-                <li>Olvasás/Írás: ${scores.b}</li>
-                <li>Auditív: ${scores.c}</li>
-                <li>Kinetikus: ${scores.d}</li>
+            <ul style="list-style: none; padding-left: 0;">
+                <li>a) Vizuális: ${scores.a}</li>
+                <li>b) Olvasás/Írás: ${scores.b}</li>
+                <li>c) Auditív: ${scores.c}</li>
+                <li>d) Kinetikus: ${scores.d}</li>
             </ul>
             <p>Az Ön domináns típusa: <strong>${types.join(", ")}</strong></p>
             <p class="small">Ha több típus is azonos pontszámot kapott, Ön többcsatornás tanuló!</p>
@@ -591,6 +875,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
+
+        // Quiz answers (for checking correctness)
+        const quizAnswers = {
+            l4: {
+                'l4-q1': 'a',
+                'l4-q2': 'false',
+                'l4-q3': ['a', 'b'], // Multi-select
+                // q4 is text
+                // q5 is text
+            },
+            l5: {
+                'l5-q1': 'b', // 1-b
+                'l5-q2': 'd', // 2-d
+                'l5-q3': 'b', // 3-b
+                'l5-q4': 'b', // 4-b
+                'l5-q5': 'b', // 5-b
+                'l5-q6': 'c', // 6-c
+                'l5-q7': 'b', // 7-b
+                'l5-q8': 'b', // 8-b
+                'l5-q9': 'b', // 9-b
+            },
+            l6: {
+                'l6-q1': 'b',
+                'l6-q2': 'd',
+                'l6-q3': 'b',
+                'l6-q4': 'b',
+                'l6-q5': 'b',
+                'l6-q6': 'c',
+                'l6-q7': 'b',
+                'l6-q8': 'b',
+                'l6-q9': 'b'
+            }
+        };
 
         const quizContainers = document.querySelectorAll('.vark-options, #quiz-questions, #feedback-analysis-quiz, #l2-feedback-quiz');
         quizContainers.forEach(container => {

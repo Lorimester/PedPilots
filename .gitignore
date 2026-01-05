@@ -4,3 +4,6 @@
 /extracted_docx
 extract_docx.py
 *.txt
+*.py
+*.md
+*.log

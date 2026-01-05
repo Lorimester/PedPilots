@@ -10,20 +10,29 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:wght@300;400;500&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <link rel="preload" as="image" href="assets/brand-header.jpg">
 </head>
 
 <body>
     <!-- Dashboard View -->
     <div id="dashboard-view">
         <div class="dashboard-container">
+            <div class="eu-disclaimer">
+                <img src="assets/EU logo.jfif" alt="EU Flag">
+                <p>Az Európai Unió finanszírozásával. Az itt szereplő információk és állítások a szerző(k) álláspontját
+                    képviselik, és nem feltétlenül tükrözik az Európai Unió vagy a Tempus Közalapítvány hivatalos
+                    véleményét. Sem az Európai Unió, sem a támogatást nyújtó hatóság nem vonható felelősségre miattuk.
+                </p>
+            </div>
             <header class="dashboard-header">
                 <div class="brand-header">
-                    <img src="assets/brand-header.jpg" alt="PedPilots Brand Header" class="header-img">
+                    <img src="assets/brand-header.jpg" alt="PedPilots Brand Header" class="header-img" width="1819"
+                        height="346">
                 </div>
             </header>
 
-            <h1>PedPilots Modulok</h1>
+            <h1>PedPilot-Módszertani eszköztár az önszabályozó tanulás fejlesztéséhez</h1>
             <p class="subtitle">Válasszon egy tanulási egységet az induláshoz!</p>
 
             <div class="lesson-grid">
@@ -45,53 +54,55 @@
                         <p>Fedezze fel a belső tűz felébresztésének és fenntartásának titkait.</p>
                     </div>
                 </div>
-                <div class="lesson-card locked">
+                <!-- Modul 3 -->
+                <div class="lesson-card active" onclick="loadLesson(3)">
                     <div class="lesson-number">3</div>
                     <div class="lesson-info">
-                        <h3>Hamarosan...</h3>
-                        <p>Következő tanulási modul.</p>
+                        <h3>Célkitűzés, tervezés, időzsonglőrködés</h3>
+                        <p>Hogy ne csak a naptára, de a lelke is rendben legyen.</p>
                     </div>
                 </div>
-                <div class="lesson-card locked">
+                <!-- Modul 4 -->
+                <div class="lesson-card active" onclick="loadLesson(4)">
                     <div class="lesson-number">4</div>
                     <div class="lesson-info">
-                        <h3>Hamarosan...</h3>
-                        <p>Következő tanulási modul.</p>
+                        <h3>Az önszabályozás 5 állomása</h3>
+                        <p>A tanulási ciklus lépései: a tervezéstől az újratervezésig.</p>
                     </div>
                 </div>
-                <div class="lesson-card locked">
+                <div class="lesson-card active" onclick="loadLesson(5)">
                     <div class="lesson-number">5</div>
                     <div class="lesson-info">
-                        <h3>Hamarosan...</h3>
-                        <p>Következő tanulási modul.</p>
+                        <h3>Metakogníció és tanulási stratégiák</h3>
+                        <p>A tanulási folyamat tudatos monitorozása, értékelése és szabályozása.</p>
                     </div>
                 </div>
-                <div class="lesson-card locked">
+                <div class="lesson-card active" onclick="loadLesson(6)">
                     <div class="lesson-number">6</div>
                     <div class="lesson-info">
-                        <h3>Hamarosan...</h3>
-                        <p>Következő tanulási modul.</p>
+                        <h3>Pedagógusi önszabályozás</h3>
+                        <p>Önismeret, szakmai fejlődés tervezése, a lifelong learning a gyakorlatban.</p>
                     </div>
                 </div>
-                <div class="lesson-card locked">
+                <div class="lesson-card active" onclick="loadLesson(7)">
                     <div class="lesson-number">7</div>
                     <div class="lesson-info">
-                        <h3>Hamarosan...</h3>
-                        <p>Következő tanulási modul.</p>
+                        <h3>Önszabályozó tanulás az osztályteremben</h3>
+                        <p>Praktikák és módszerek pedagógusoknak.</p>
                     </div>
                 </div>
-                <div class="lesson-card locked">
+                <div class="lesson-card active" onclick="loadLesson(8)">
                     <div class="lesson-number">8</div>
                     <div class="lesson-info">
-                        <h3>Hamarosan...</h3>
-                        <p>Következő tanulási modul.</p>
+                        <h3>8. Önszabályozó tanulás támogatása</h3>
+                        <p>Digitális eszközök, robotika és MI az oktatásban.</p>
                     </div>
                 </div>
-                <div class="lesson-card locked">
+                <div class="lesson-card active" onclick="loadLesson(9)">
                     <div class="lesson-number">9</div>
                     <div class="lesson-info">
-                        <h3>Hamarosan...</h3>
-                        <p>Következő tanulási modul.</p>
+                        <h3>9. Az önszabályozó tanulás nehézségei és akadályai</h3>
+                        <p>Amikor a tanulás nem megy magától - nehézségek kezelése.</p>
                     </div>
                 </div>
             </div>
@@ -114,10 +125,6 @@
             </nav>
 
             <main class="content">
-                <header class="brand-header">
-                    <img src="assets/brand-header.jpg" alt="PedPilots Brand Header" class="header-img">
-                </header>
-
                 <div id="lesson-content">
                     <!-- Lesson content will be loaded here via fetch -->
                     <div class="loading-spinner">Munkamenet betöltése...</div>
