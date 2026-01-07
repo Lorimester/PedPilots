@@ -1,9 +1,9 @@
-*.docx
 *.zip
 /doc_extracted
 /extracted_docx
 extract_docx.py
-*.txt
 *.py
-*.md
 *.log
+*.docx
+*.md
+*.txt

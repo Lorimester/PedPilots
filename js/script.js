@@ -217,7 +217,10 @@ function getLabelForId(id) {
         'rah-insight': 'Ráhangolódás: Tanulság',
 
         'focus-strength': 'Önszabályozás: Erősség',
+        'focus-strength': 'Önszabályozás: Erősség',
         'focus-weakness': 'Önszabályozás: Fejlesztendő',
+        'focus-strength-select': 'Önszabályozás: Erősség (Kiválasztott)',
+        'focus-weakness-select': 'Önszabályozás: Fejlesztendő (Kiválasztott)',
 
         'map-green': 'Tanulási Térkép: Jól teljesítek',
         'map-red': 'Tanulási Térkép: Elakadok',
@@ -355,7 +358,10 @@ function getLabelForId(id) {
         'rah-emotions': 'L5 - Tanulással kapcsolatos érzelmek',
         'rah-insight': 'L5 - Pedagógusi tanulási mintázat',
         'focus-strength': 'L5 - Önszabályozási erősség',
+        'focus-strength': 'L5 - Önszabályozási erősség',
         'focus-weakness': 'L5 - Fejlesztendő terület',
+        'focus-strength-select': 'L5 - Legerősebb fázis',
+        'focus-weakness-select': 'L5 - Fejlesztendő fázis',
         'map-green': 'L5 Térkép - Jól teljesítek',
         'map-red': 'L5 Térkép - Elakadok',
         'map-yellow': 'L5 Térkép - Motivál',
@@ -364,11 +370,43 @@ function getLabelForId(id) {
         'pyr-lvl1': 'L5 Piramis - 1. Fő cél',
         'pyr-lvl2': 'L5 Piramis - 2. Motiváció',
         'pyr-lvl3': 'L5 Piramis - 3. Szokások',
-        'pyr-lvl4': 'L5 Piramis - 4. Akadályok',
+        'pyr-lvl4-obstacle': 'L5 Piramis - 4. Akadály',
+        'pyr-lvl4-solution': 'L5 Piramis - 4. Megoldás',
         'pyr-reflex': 'L5 Piramis - Kulcs a sikerhez',
         'monitor-own-questions': 'L5 - Saját monitorozó kérdések',
-        'monitor-logistics': 'L5 - Monitorozás ideje/helye',
+
+        'monitor-method-1': 'L5 Monitorozás - Módszer: Napló',
+        'monitor-method-2': 'L5 Monitorozás - Módszer: Kérdések',
+        'monitor-method-3': 'L5 Monitorozás - Módszer: Visszajelzés',
+        'monitor-method-4': 'L5 Monitorozás - Módszer: Mérföldkövek',
+        'monitor-place': 'L5 Monitorozás - Hely',
+        'monitor-time': 'L5 Monitorozás - Idő',
+        'monitor-final-reflection': 'L5 Monitorozás - Záró reflexió',
+
         'monitor-commitment': 'L5 - Elköteleződés a monitorozás mellett',
+
+        'env-ideal': 'L5 Környezet - Ideális',
+        'env-real': 'L5 Környezet - Jelenlegi',
+        'env-focus': 'L5 Környezet - Fókusz',
+        'env-reflection-1': 'L5 Környezet - Záró reflexió (Felismerés)',
+        'env-reflection-2': 'L5 Környezet - Záró reflexió (Változtatás)',
+
+        'support-1-start': 'L5 Támogató - 1. Kiindulópont',
+        'support-2-plan': 'L5 Támogató - 2. Tervezés',
+        'support-3-check-1': 'L5 Támogató - 3. Monitorozás (Kipróbált)',
+        'support-3-check-2': 'L5 Támogató - 3. Monitorozás (Nehézség)',
+        'support-3-check-3': 'L5 Támogató - 3. Monitorozás (Siker)',
+        'support-3-check-4': 'L5 Támogató - 3. Monitorozás (Visszajelzés)',
+        'support-3-text': 'L5 Támogató - 3. Monitorozás (Részletek)',
+        'support-4-reflex': 'L5 Támogató - 4. Reflexió',
+        'support-5-eval': 'L5 Támogató - 5. Értékelés',
+        'support-6-check-1': 'L5 Támogató - 6. Affektív (Szünet)',
+        'support-6-check-2': 'L5 Támogató - 6. Affektív (Dicséret)',
+        'support-6-check-3': 'L5 Támogató - 6. Affektív (Stressz)',
+        'support-6-text': 'L5 Támogató - 6. Affektív (Részletek)',
+        'support-7-env': 'L5 Támogató - 7. Környezet',
+        'support-8-next': 'L5 Támogató - 8. Következő lépés',
+
         // Module 7
         'l7-task-1': 'Fogalmazza meg a különbséget (7. modul)',
         'l7-task-2': 'Fejleszthető-e osztályteremben? (7. modul)',
@@ -438,6 +476,15 @@ function updateSummary() {
         const val = localStorage.getItem(prefix + `${window.currentLessonId}_table_${tbody.id}`);
         if (val) {
             summaryText += `Táblázat választás (${tbody.id}): Kijelölt sorok indexei: ${val}\n\n`;
+        }
+    });
+
+    const checkboxes = document.querySelectorAll('.reflection-input-checkbox');
+    checkboxes.forEach(chk => {
+        const label = getLabelForId(chk.id);
+        const val = localStorage.getItem(prefix + chk.id); // Stored as "true" or "false"
+        if (val === 'true') {
+            summaryText += `${label}: Kiválasztva\n\n`;
         }
     });
 
@@ -654,6 +701,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Checkboxes
+        const checkboxes = document.querySelectorAll('.reflection-input-checkbox');
+        checkboxes.forEach(chk => {
+            chk.addEventListener('change', () => {
+                saveData(chk.id, chk.checked);
+                updateSummary();
+            });
+        });
+
         if (ui.debateSelect) {
             ui.debateSelect.addEventListener('change', () => {
                 saveData(ui.debateSelect.id, ui.debateSelect.value);
@@ -669,7 +725,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const container = option.parentElement;
 
             // Radio-like behavior for VARK questions
-            if (container.id === 'quiz-questions' || container.id === 'vark-quiz-container' || container.classList.contains('vark-options') && container.closest('.vark-question')) {
+            if (container.id === 'quiz-questions' || container.id === 'vark-quiz-container' || (container.classList.contains('vark-options') && container.closest('.vark-question')) || container.classList.contains('single-select')) {
                 const siblings = container.querySelectorAll('.vark-option');
                 siblings.forEach(s => s.classList.remove('selected'));
                 option.classList.add('selected');
@@ -968,6 +1024,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     select.value = JSON.parse(val);
                 } catch (e) {
                     select.value = val;
+                }
+            }
+        });
+
+        // Load Checkboxes
+        const checkboxes = document.querySelectorAll('.reflection-input-checkbox');
+        checkboxes.forEach(chk => {
+            const val = localStorage.getItem(prefix + chk.id);
+            if (val) {
+                try {
+                    chk.checked = JSON.parse(val);
+                } catch (e) {
+                    console.error("Error loading checkbox", e);
                 }
             }
         });

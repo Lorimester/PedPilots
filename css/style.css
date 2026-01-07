@@ -31,23 +31,7 @@
     --locked-color: #f1f1f1;
     --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 
-    /* --- PEDPILOTS VIBRANT PALETTE --- */
-    --color-1: #008ca1;
-    /* Teal */
-    --color-2: #f7941d;
-    /* Orange */
-    --color-3: #8e24aa;
-    /* Purple */
-    --color-4: #d81b60;
-    /* Pink */
-    --color-5: #2e7d32;
-    /* Green */
-    --color-6: #1a3a5f;
-    /* Navy */
-    --color-7: #c62828;
-    /* Red */
-    --color-8: #0277bd;
-    /* Blue */
+
 }
 
 .hidden {
@@ -88,10 +72,7 @@ h4 {
 h1 {
     font-size: 2.8rem;
     margin-bottom: 0.5rem;
-    background: linear-gradient(45deg, var(--color-1), var(--color-4), var(--color-2));
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--primary-color);
 }
 
 h2 {
@@ -259,58 +240,19 @@ p:has(textarea) {
 }
 
 .nav-link.active {
+    background-color: var(--primary-color);
     color: white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-/* Cyclic Sidebar Colors */
-.sidebar li:nth-child(8n+1) .nav-link.active,
-.sidebar li:nth-child(8n+1) .nav-link:hover {
-    background-color: var(--color-1);
-    color: white;
+.nav-link:focus {
+    outline: none;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 140, 161, 0.3);
 }
 
-.sidebar li:nth-child(8n+2) .nav-link.active,
-.sidebar li:nth-child(8n+2) .nav-link:hover {
-    background-color: var(--color-2);
-    color: white;
-}
 
-.sidebar li:nth-child(8n+3) .nav-link.active,
-.sidebar li:nth-child(8n+3) .nav-link:hover {
-    background-color: var(--color-3);
-    color: white;
-}
-
-.sidebar li:nth-child(8n+4) .nav-link.active,
-.sidebar li:nth-child(8n+4) .nav-link:hover {
-    background-color: var(--color-4);
-    color: white;
-}
-
-.sidebar li:nth-child(8n+5) .nav-link.active,
-.sidebar li:nth-child(8n+5) .nav-link:hover {
-    background-color: var(--color-5);
-    color: white;
-}
-
-.sidebar li:nth-child(8n+6) .nav-link.active,
-.sidebar li:nth-child(8n+6) .nav-link:hover {
-    background-color: var(--color-6);
-    color: white;
-}
-
-.sidebar li:nth-child(8n+7) .nav-link.active,
-.sidebar li:nth-child(8n+7) .nav-link:hover {
-    background-color: var(--color-7);
-    color: white;
-}
-
-.sidebar li:nth-child(8n+8) .nav-link.active,
-.sidebar li:nth-child(8n+8) .nav-link:hover {
-    background-color: var(--color-8);
-    color: white;
-}
 
 
 .nav-link svg {
@@ -493,47 +435,15 @@ p:has(textarea) {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
 }
 
+.lesson-card:hover:not(.locked) .lesson-number {
+    transform: rotate(15deg);
+    background-color: var(--secondary-color);
+    color: white;
+}
+
 .lesson-card.active::before {
     display: none;
     /* Remove old gradient bar */
-}
-
-/* Vibrant Cyclic Cards */
-.lesson-card:nth-child(8n+1) {
-    background-color: var(--color-1);
-}
-
-.lesson-card:nth-child(8n+2) {
-    background-color: var(--color-2);
-}
-
-.lesson-card:nth-child(8n+3) {
-    background-color: var(--color-3);
-}
-
-.lesson-card:nth-child(8n+4) {
-    background-color: var(--color-4);
-}
-
-.lesson-card:nth-child(8n+5) {
-    background-color: var(--color-5);
-}
-
-.lesson-card:nth-child(8n+6) {
-    background-color: var(--color-6);
-}
-
-.lesson-card:nth-child(8n+7) {
-    background-color: var(--color-7);
-}
-
-.lesson-card:nth-child(8n+8) {
-    background-color: var(--color-8);
-}
-
-.lesson-card:not(.locked) .lesson-info h3,
-.lesson-card:not(.locked) .lesson-info p {
-    color: white !important;
 }
 
 .lesson-number {
@@ -547,47 +457,13 @@ p:has(textarea) {
     font-weight: 700;
     flex-shrink: 0;
     transition: var(--transition);
-    background-color: rgba(255, 255, 255, 0.2);
-    /* Fallback */
-    color: white;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
 }
 
-.lesson-card:not(.locked) .lesson-number {
-    background-color: white;
-    color: inherit;
-    /* Inherits from parent, but we need specific color */
-}
-
-.lesson-card:nth-child(8n+1) .lesson-number {
-    color: var(--color-1);
-}
-
-.lesson-card:nth-child(8n+2) .lesson-number {
-    color: var(--color-2);
-}
-
-.lesson-card:nth-child(8n+3) .lesson-number {
-    color: var(--color-3);
-}
-
-.lesson-card:nth-child(8n+4) .lesson-number {
-    color: var(--color-4);
-}
-
-.lesson-card:nth-child(8n+5) .lesson-number {
-    color: var(--color-5);
-}
-
-.lesson-card:nth-child(8n+6) .lesson-number {
-    color: var(--color-6);
-}
-
-.lesson-card:nth-child(8n+7) .lesson-number {
-    color: var(--color-7);
-}
-
-.lesson-card:nth-child(8n+8) .lesson-number {
-    color: var(--color-8);
+.lesson-card.locked .lesson-number {
+    background-color: var(--locked-color);
+    color: #bdbdbd;
 }
 
 /* Ensure Lesson Info H3 overrides */
@@ -645,113 +521,17 @@ p:has(textarea) {
 }
 
 /* Cyclic Card Content Borders/Headers */
+/* Basic Card Colors - Reverted to default */
 #lesson-content .scroll-section .card {
-    border: none;
     border-left-width: 5px;
     border-left-style: solid;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background-color: white;
     color: var(--text-color);
+    border-left-color: var(--secondary-color);
+    /* Default fallback */
 }
 
-#lesson-content .scroll-section .card:hover {
-    transform: translateY(-5px);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+1) .card {
-    border-left-color: var(--color-1);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+2) .card {
-    border-left-color: var(--color-2);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+3) .card {
-    border-left-color: var(--color-3);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+4) .card {
-    border-left-color: var(--color-4);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+5) .card {
-    border-left-color: var(--color-5);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+6) .card {
-    border-left-color: var(--color-6);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+7) .card {
-    border-left-color: var(--color-7);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+8) .card {
-    border-left-color: var(--color-8);
-}
-
-/* Colorize Headers inside cards based on section */
-#lesson-content .scroll-section:nth-of-type(8n+1) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+1) .card h4 {
-    color: var(--color-1);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+2) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+2) .card h4 {
-    color: var(--color-2);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+3) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+3) .card h4 {
-    color: var(--color-3);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+4) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+4) .card h4 {
-    color: var(--color-4);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+5) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+5) .card h4 {
-    color: var(--color-5);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+6) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+6) .card h4 {
-    color: var(--color-6);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+7) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+7) .card h4 {
-    color: var(--color-7);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+8) .card h3,
-#lesson-content .scroll-section:nth-of-type(8n+8) .card h4 {
-    color: var(--color-8);
-}
-
-/* Variety for even cards - swap border and header colors */
-#lesson-content .scroll-section:nth-of-type(8n+1) .card:nth-of-type(even) {
-    border-left-color: var(--color-2);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+1) .card:nth-of-type(even) h3,
-#lesson-content .scroll-section:nth-of-type(8n+1) .card:nth-of-type(even) h4 {
-    color: var(--color-2);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+2) .card:nth-of-type(even) {
-    border-left-color: var(--color-3);
-}
-
-#lesson-content .scroll-section:nth-of-type(8n+2) .card:nth-of-type(even) h3,
-#lesson-content .scroll-section:nth-of-type(8n+2) .card:nth-of-type(even) h4 {
-    color: var(--color-3);
-}
-
-/* ... Simplified variety to reduce code bloat, just doing 2 example swaps if needed, or keeping it consistent per section is safer for readability. Keeping per-section consistency for now as per user request to revert. */
-/* Actually, let's keep it simple: One color per section for consistency and readability */
 
 
 /* Reset specific inputs styles that were for dark mode cards */
@@ -1039,45 +819,7 @@ textarea.reflection-input {
     color: white;
 }
 
-.btn:nth-of-type(8n+1) {
-    background-color: var(--color-1);
-    box-shadow: 0 4px 15px rgba(0, 140, 161, 0.3);
-}
 
-.btn:nth-of-type(8n+2) {
-    background-color: var(--color-2);
-    box-shadow: 0 4px 15px rgba(247, 148, 29, 0.3);
-}
-
-.btn:nth-of-type(8n+3) {
-    background-color: var(--color-3);
-    box-shadow: 0 4px 15px rgba(142, 36, 170, 0.3);
-}
-
-.btn:nth-of-type(8n+4) {
-    background-color: var(--color-4);
-    box-shadow: 0 4px 15px rgba(216, 27, 96, 0.3);
-}
-
-.btn:nth-of-type(8n+5) {
-    background-color: var(--color-5);
-    box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
-}
-
-.btn:nth-of-type(8n+6) {
-    background-color: var(--color-6);
-    box-shadow: 0 4px 15px rgba(26, 58, 95, 0.3);
-}
-
-.btn:nth-of-type(8n+7) {
-    background-color: var(--color-7);
-    box-shadow: 0 4px 15px rgba(198, 40, 40, 0.3);
-}
-
-.btn:nth-of-type(8n+8) {
-    background-color: var(--color-8);
-    box-shadow: 0 4px 15px rgba(2, 119, 189, 0.3);
-}
 
 .btn:hover {
     transform: translateY(-3px);
