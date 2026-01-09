@@ -1062,6 +1062,10 @@ textarea.reflection-input {
     background: #fcfcfd;
 }
 
+.accordion-body {
+    padding: 1rem 2rem;
+}
+
 .accordion-content-inner {
     padding: 1.5rem;
     border-top: 1px solid #e2e8f0;
