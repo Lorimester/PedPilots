@@ -791,6 +791,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // 4. Handle Details Toggle inside Accordion (Capture phase)
+    document.addEventListener('toggle', (e) => {
+        if (e.target.tagName === 'DETAILS') {
+            const accordionContent = e.target.closest('.accordion-content');
+            if (accordionContent && accordionContent.style.maxHeight && accordionContent.style.maxHeight !== '0px') {
+                // Recalculate max-height. Add a small buffer.
+                // We restart the transition or just set immediate height?
+                // Setting it to scrollHeight is usually enough.
+                accordionContent.style.maxHeight = (accordionContent.scrollHeight + 20) + "px";
+            }
+        }
+    }, true);
+
 
     // --- Static Event Listeners ---
     window.addEventListener('scroll', () => {
