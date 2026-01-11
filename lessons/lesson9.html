@@ -1,4 +1,49 @@
 <div class="lesson-container">
+    <style>
+        /* Styles for fillable tables in Lesson 9 */
+        .table-input {
+            width: 100%;
+            min-height: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 0.9em;
+            background-color: #fdfdfd;
+            transition: border-color 0.3s;
+        }
+
+        .table-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(0, 140, 161, 0.1);
+        }
+
+        .inline-input {
+            border: none;
+            border-bottom: 2px solid #ddd;
+            background: transparent;
+            padding: 4px 8px;
+            font-family: inherit;
+            font-size: inherit;
+            color: var(--primary-color);
+            flex: 1;
+            transition: border-color 0.3s;
+        }
+
+        .inline-input:focus {
+            outline: none;
+            border-bottom-color: var(--primary-color);
+        }
+
+        /* Adjust table cell padding for inputs */
+        .data-table td:has(.table-input) {
+            padding: 8px;
+            vertical-align: top;
+        }
+    </style>
     <div class="lesson-nav-content">
         <ul class="lesson-nav">
             <li><a href="#bevezetes" class="nav-link active"><svg xmlns="http://www.w3.org/2000/svg" width="24"
@@ -20,7 +65,7 @@
                         stroke-linejoin="round">
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
                         <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg> Tananyag</a></li>
+                    </svg>Maganyag</a></li>
             <li><a href="#tamogato" class="nav-link"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                         stroke-linejoin="round">
@@ -96,6 +141,14 @@
                         is tudatosabban tudjon reagálni a felmerülő nehézségekre.</li>
                 </ul>
 
+                <div
+                    style="margin-top: 1rem; padding: 1rem; background-color: #f0fdf4; border-left: 4px solid var(--success-color); border-radius: 6px;">
+                    <p style="margin: 0; font-weight: 600; color: var(--success-color);">A tanegységhez rendelt idő:</p>
+                    <p>Önálló feldolgozás esetén javasolt: 2×45 perc.</p>
+                    <p>Az anyag részletekben is olvasható; egy-egy fejezet végén található önreflexiós kérdések akár
+                        10–15 perces „mini-szünetként” is beilleszthetők a mindennapokba.</p>
+                </div>
+                <br>
                 <p><strong>Tanulási eredmények:</strong></p>
                 <p>A következő pedagógusi kompetenciák fejlesztése kerül előtérbe:</p>
                 <ul>
@@ -105,27 +158,12 @@
                         hibázni lehet)</li>
                     <li>Reflexív gondolkodás: önálló visszatekintés, a tanulási tapasztalatok elemzése</li>
                 </ul>
-                <div
-                    style="margin-top: 1rem; padding: 1rem; background-color: #f0fdf4; border-left: 4px solid var(--success-color); border-radius: 6px;">
-                    <p style="margin: 0; font-weight: 600; color: var(--success-color);">A tanegységhez rendelt idő:</p>
-                    <p>Önálló feldolgozás esetén javasolt: 2×45 perc.</p>
-                    <p>Az anyag részletekben is olvasható; egy-egy fejezet végén található önreflexiós kérdések akár
-                        10–15 perces „mini-szünetként” is beilleszthetők a mindennapokba.</p>
-                </div>
+
             </div>
         </section>
 
         <section id="tananyag" class="scroll-section">
-            <h2> Tananyag</h2>
-            <div class="card">
-                <h3>Maganyag</h3>
-                <h3>Bevezető</h3>
-                <h3>1. Miért természetesek a nehézségek az önszabályozó tanulásban?</h3>
-                <p>Az önszabályozó tanulás nem lineáris, hanem ciklikus folyamat. A motiváció, a figyelem, az
-                    időgazdálkodás, az érzelmek és a külső körülmények folyamatosan változnak. Emiatt elkerülhetetlen,
-                    hogy bizonyos szakaszokban a tanuló – legyen diák vagy pedagógus – úgy érezze: „most nem megy”.</p>
-            </div>
-
+            <h2>Maganyag</h2>
             <div class="accordion">
                 <!-- 1. Miért természetesek a nehézségek -->
                 <div class="accordion-item">
@@ -141,6 +179,10 @@
                     </div>
                     <div class="accordion-content">
                         <div class="accordion-content-inner">
+                            <p>Az önszabályozó tanulás nem lineáris, hanem ciklikus folyamat. A motiváció, a figyelem,
+                                az időgazdálkodás, az érzelmek és a külső körülmények folyamatosan változnak. Emiatt
+                                elkerülhetetlen, hogy bizonyos szakaszokban a tanuló – legyen diák vagy pedagógus – úgy
+                                érezze: „most nem megy”.</p>
                             <p>A szakirodalom az önszabályozó tanulást gyakran három fő fázisra bontja: a tanulás
                                 előkészítő szakaszára (célkitűzés, tervezés), a végrehajtási szakaszra (stratégiák
                                 alkalmazása, monitorozás) és a reflektív szakaszra (értékelés, újratervezés). Mindhárom
@@ -158,18 +200,15 @@
                                 <p><strong>Reflexiós kérdések:</strong></p>
                                 <p class="mb-2">Hogyan szokta értelmezni saját tanulási nehézségeit: kudarcként vagy
                                     jelzésként?</p>
-                                <textarea id="l9-task-1" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-1" class="reflection-input" placeholder="Válaszom ..."></textarea>
 
                                 <p class="mb-2">Milyen belső mondatokat vesz észre magában egy elakadás idején (pl.
                                     „úgysem fog menni”, „majd holnap”)?</p>
-                                <textarea id="l9-task-2" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-2" class="reflection-input" placeholder="Válaszom ..."></textarea>
 
                                 <p class="mb-2">Volt-e olyan helyzet, amikor egy nehézség végül hasznos irányváltást
                                     hozott a tanulásában?</p>
-                                <textarea id="l9-task-3" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-3" class="reflection-input" placeholder="Válaszom ..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -211,20 +250,19 @@
                                 <p><strong>Reflexiós kérdések:</strong></p>
                                 <p class="mb-2">Milyen típusú célokat szokott kitűzni: inkább általánosakat vagy
                                     konkrétakat?</p>
-                                <textarea id="l9-task-4" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-4" class="reflection-input" placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Előfordult-e, hogy túl sok célt vállalt egyszerre? Mi lett ennek a
                                     következménye?</p>
                                 <textarea id="l9-task-5-extra" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Milyen jelekből veszi észre, hogy a tervei nem reálisak az adott
                                     időszakra nézve?</p>
                                 <textarea id="l9-task-5-extra2" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
                             </div>
-
+                            <br>
                             <h4>2.2. Nehézségek a végrehajtás (monitorozás) fázisában</h4>
                             <p>A tanulási folyamat közben a leggyakoribb akadályok a következők:</p>
                             <ul>
@@ -249,19 +287,17 @@
                                 <p><strong>Reflexiós kérdések:</strong></p>
                                 <p class="mb-2">Mikor szokta a tanulási feladatait időben a nap során végezni? Mennyire
                                     támogatja ez az időpont a koncentrációját?</p>
-                                <textarea id="l9-task-5" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-5" class="reflection-input" placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Melyek a leggyakoribb figyelemelterelő tényezők az Ön esetében?</p>
-                                <textarea id="l9-task-6" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-6" class="reflection-input" placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Milyen egyszerű szabályt tudna bevezetni annak érdekében, hogy tanulás
                                     közben kevesebb legyen a megszakítás?</p>
                                 <textarea id="l9-task-6-extra" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
                             </div>
-
+                            <br>
                             <h4>2.3. Nehézségek a reflektív fázisban (értékelés, újratervezés)</h4>
                             <p>A tanulási folyamat lezárásakor és újratervezésekor is megjelenhetnek akadályok:</p>
                             <ul>
@@ -285,17 +321,17 @@
                                 <p class="mb-2">Amikor visszatekint egy tanulási időszakra, mire figyel először: a
                                     hiányokra vagy az elért eredményekre?</p>
                                 <textarea id="l9-task-6-extra2" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Hogyan szokta „lezárni” magában a tanulási folyamatokat (pl.
                                     továbbképzés, projekt, vizsga)?</p>
                                 <textarea id="l9-task-6-extra3" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Van-e bármilyen szokása, amellyel tudatosítja a saját fejlődését (pl.
                                     rövid jegyzet, lista, beszélgetés valakivel)?</p>
                                 <textarea id="l9-task-6-extra4" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -336,18 +372,17 @@
                                 <p><strong>Reflexiós kérdések:</strong></p>
                                 <p class="mb-2">Melyik jellegzetes „belső mondatát” hallja leggyakrabban tanulási
                                     helyzetben?</p>
-                                <textarea id="l9-task-7" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-7" class="reflection-input" placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Ezek közül melyik támogatja, és melyik gátolja a tanulását?</p>
                                 <textarea id="l9-task-7-extra" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Ha a barátjának vagy diákjának mondaná ugyanazt, amit most magának
                                     szokott, ugyanilyen hangnemben tenné? Ha nem, hogyan fogalmazná át támogatóbb módon?
                                 </p>
                                 <textarea id="l9-task-7-extra2" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -389,18 +424,16 @@
                                 <p><strong>Reflexiós kérdések:</strong></p>
                                 <p class="mb-2">Milyen külső körülmények nehezítik leginkább jelenleg az Ön tanulását?
                                 </p>
-                                <textarea id="l9-task-8" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-8" class="reflection-input" placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Ezek közül melyik fölött van valamilyen – akár részleges – kontrollja,
                                     és melyik fölött nincs?</p>
                                 <textarea id="l9-task-8-extra" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Mi lenne az a két apró, de reálisan megvalósítható változtatás, amellyel
                                     barátságosabbá tehetné a saját tanulási környezetét?</p>
-                                <textarea id="l9-task-9" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-9" class="reflection-input" placeholder="Válaszom..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -440,18 +473,16 @@
                                 <p><strong>Reflexiós kérdések:</strong></p>
                                 <p class="mb-2">Ha most egy mondatban kellene megfogalmaznia: mi a legjellemzőbb
                                     nehézség az Ön önszabályozó tanulásában?</p>
-                                <textarea id="l9-task-10" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-10" class="reflection-input" placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Milyen apró lépést tudna tenni már a következő héten ennek enyhítésére?
                                 </p>
-                                <textarea id="l9-task-11" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                <textarea id="l9-task-11" class="reflection-input" placeholder="Válaszom..."></textarea>
 
                                 <p class="mb-2">Kinek a támogatása, bátorítása segítene abban, hogy ezt a lépést valóban
                                     meg is tegye?</p>
                                 <textarea id="l9-task-11-extra" class="reflection-input"
-                                    placeholder="Válaszom: ________________________________"></textarea>
+                                    placeholder="Válaszom..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -481,18 +512,53 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>(Példa)</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                             <tr>
-                                <td>...</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                         </tbody>
                     </table>
@@ -511,6 +577,7 @@
                     <li>Reális célokat tűzök ki, figyelembe véve az időmet és az energiámat.</li>
                     <li>Jogom van egyszerűsíteni és kevesebbet vállalni.</li>
                 </ul>
+                <br>
                 <p><strong>Végrehajtáskor</strong></p>
                 <ul>
                     <li>Most csak erre az egy feladatra figyelek.</li>
@@ -518,6 +585,7 @@
                     <li>Rövid szakaszokban is lehet haladni, nem kell tökéletesen mennie.</li>
                     <li>Minden 5–10 percnyi munka közelebb visz a célomhoz.</li>
                 </ul>
+                <br>
                 <p><strong>Reflexiókor</strong></p>
                 <ul>
                     <li>Jogom van elismerni azt is, amit már megtettem.</li>
@@ -525,10 +593,25 @@
                     <li>Megnézhetem, mit tanultam ebből a helyzetből – nem csak azt, mi nem sikerült.</li>
                     <li>Lehetek egyszerre kritikus és együttérző önmagammal.</li>
                 </ul>
+                <br>
                 <p><strong>Saját mondataim:</strong></p>
-                <p>1.________________________________________________</p>
-                <p>2.________________________________________________</p>
-                <p>3. ________________________________________________</p>
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <span style="font-weight: bold; margin-top: 10px;">1.</span>
+                        <textarea class="table-input" placeholder="Írja ide saját megerősítő mondatát..."
+                            style="min-height: 80px; flex: 1;"></textarea>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <span style="font-weight: bold; margin-top: 10px;">2.</span>
+                        <textarea class="table-input" placeholder="Írja ide saját megerősítő mondatát..."
+                            style="min-height: 80px; flex: 1;"></textarea>
+                    </div>
+                    <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <span style="font-weight: bold; margin-top: 10px;">3.</span>
+                        <textarea class="table-input" placeholder="Írja ide saját megerősítő mondatát..."
+                            style="min-height: 80px; flex: 1;"></textarea>
+                    </div>
+                </div>
             </div>
 
             <div class="card info-card" style="margin-top: 20px;">
@@ -550,45 +633,45 @@
                         <tbody>
                             <tr>
                                 <td>Hétfő</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Kedd</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Szerda</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Csütörtök</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Péntek</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Szombat</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                             <tr>
                                 <td>Vasárnap</td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
+                                <td><textarea class="table-input"></textarea></td>
                             </tr>
                         </tbody>
                     </table>
@@ -607,11 +690,9 @@
 
             <div class="card">
                 <h3>Önreflexiós kérdésgyűjtemény</h3>
-                <h3>Használati útmutató:</h3>
+                <p><strong>Használati útmutató:</strong></p>
                 <p>Az alábbi kérdéseket egyéni önreflexiós munkához használhatja. Válasszon ki belőlük néhányat egy-egy
                     tanulási időszak végén, és írjon rájuk rövid válaszokat.</p>
-                <p><em>(Megjegyzés: A fenti harmonika részekben már találkozhatott ezekkel a kérdésekkel, itt egyben is
-                        megtalálja őket.)</em></p>
 
                 <!-- Tasks are inside accordions, repeating them here might be redundant but user wanted strict content. 
                       Ideally, I should link them or list them. 
@@ -625,18 +706,91 @@
                     style="margin-top: 1.5rem; background: #fffbe6; padding: 1rem; border-radius: 8px;">
                     <p><strong>1. Miért természetesek a nehézségek az önszabályozó tanulásban?</strong></p>
                     <p class="mb-2">Hogyan szokta értelmezni saját tanulási nehézségeit: kudarcként vagy jelzésként?</p>
-                    <textarea id="l9-task-1-dup" class="reflection-input"
-                        placeholder="Válaszom: ________________________________"></textarea>
+                    <textarea id="l9-task-1-dup" class="reflection-input" placeholder="Válaszom ..."></textarea>
 
                     <p class="mb-2">Milyen belső mondatokat vesz észre magában egy elakadás idején (pl. „úgysem fog
                         menni”, „majd holnap”)?</p>
-                    <textarea id="l9-task-2-dup" class="reflection-input"
-                        placeholder="Válaszom: ________________________________"></textarea>
+                    <textarea id="l9-task-2-dup" class="reflection-input" placeholder="Válaszom ..."></textarea>
 
                     <p class="mb-2">Volt-e olyan helyzet, amikor egy nehézség végül hasznos irányváltást hozott a
                         tanulásában?</p>
-                    <textarea id="l9-task-3-dup" class="reflection-input"
-                        placeholder="Válaszom: ________________________________"></textarea>
+                    <textarea id="l9-task-3-dup" class="reflection-input" placeholder="Válaszom ..."></textarea>
+
+                    <br>
+                    <p><strong>2. Tipikus nehézségek a tanulási ciklus egyes szakaszaiban</strong></p>
+                    <p class="mb-2">Milyen típusú célokat szokott kitűzni: inkább általánosakat vagy konkrétakat?</p>
+                    <textarea id="l9-task-4-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Előfordult-e, hogy túl sok célt vállalt egyszerre? Mi lett ennek a következménye?
+                    </p>
+                    <textarea id="l9-task-5-extra-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Milyen jelekből veszi észre, hogy a tervei nem reálisak az adott időszakra nézve?
+                    </p>
+                    <textarea id="l9-task-5-extra2-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <br>
+                    <p class="mb-2">Mikor szokta a tanulási feladatait időben a nap során végezni? Mennyire támogatja ez
+                        az időpont a koncentrációját?</p>
+                    <textarea id="l9-task-5-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Melyek a leggyakoribb figyelemelterelő tényezők az Ön esetében?</p>
+                    <textarea id="l9-task-6-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Milyen egyszerű szabályt tudna bevezetni annak érdekében, hogy tanulás közben
+                        kevesebb legyen a megszakítás?</p>
+                    <textarea id="l9-task-6-extra-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <br>
+                    <p class="mb-2">Amikor visszatekint egy tanulási időszakra, mire figyel először: a hiányokra vagy az
+                        elért eredményekre?</p>
+                    <textarea id="l9-task-6-extra2-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Hogyan szokta „lezárni” magában a tanulási folyamatokat (pl. továbbképzés, projekt,
+                        vizsga)?</p>
+                    <textarea id="l9-task-6-extra3-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Van-e bármilyen szokása, amellyel tudatosítja a saját fejlődését (pl. rövid jegyzet,
+                        lista, beszélgetés valakivel)?</p>
+                    <textarea id="l9-task-6-extra4-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <br>
+                    <p><strong>3. Belső akadályok: hiedelmek / nézetek, érzelmek, önértékelés</strong></p>
+                    <p class="mb-2">Melyik jellegzetes „belső mondatát” hallja leggyakrabban tanulási helyzetben?</p>
+                    <textarea id="l9-task-7-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Ezek közül melyik támogatja, és melyik gátolja a tanulását?</p>
+                    <textarea id="l9-task-7-extra-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Ha a barátjának vagy diákjának mondaná ugyanazt, amit most magának szokott,
+                        ugyanilyen hangnemben tenné? Ha nem, hogyan fogalmazná át támogatóbb módon?</p>
+                    <textarea id="l9-task-7-extra2-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <br>
+                    <p><strong>4. Külső akadályok: idő, szerepek, környezet</strong></p>
+                    <p class="mb-2">Milyen külső körülmények nehezítik leginkább jelenleg az Ön tanulását?</p>
+                    <textarea id="l9-task-8-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Ezek közül melyik fölött van valamilyen – akár részleges – kontrollja, és melyik
+                        fölött nincs?</p>
+                    <textarea id="l9-task-8-extra-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Mi lenne az a két apró, de reálisan megvalósítható változtatás, amellyel
+                        barátságosabbá tehetné a saját tanulási környezetét?</p>
+                    <textarea id="l9-task-9-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <br>
+                    <p><strong>5. A nehézségekhez való viszony átalakítása</strong></p>
+                    <p class="mb-2">Ha most egy mondatban kellene megfogalmaznia: mi a legjellemzőbb nehézség az Ön
+                        önszabályozó tanulásában?</p>
+                    <textarea id="l9-task-10-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Milyen apró lépést tudna tenni már a következő héten ennek enyhítésére?</p>
+                    <textarea id="l9-task-11-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
+
+                    <p class="mb-2">Kinek a támogatása, bátorítása segítene abban, hogy ezt a lépést valóban meg is
+                        tegye?</p>
+                    <textarea id="l9-task-11-extra-dup" class="reflection-input" placeholder="Válaszom..."></textarea>
                 </div>
             </div>
         </section>
