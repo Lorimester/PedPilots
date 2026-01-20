@@ -247,8 +247,10 @@ function getLabelForId(id) {
         'debate-statement': 'Vita-állítás',
         'debate-for': 'Támogató érv',
         'debate-against': 'Ellenző érv',
-        'mirror-1': 'Sikerélmény leírása',
-        'mirror-2': 'Nehézség leírása',
+        'mirror-1a': 'Sikerélmény - Mikor?',
+        'mirror-1b': 'Sikerélmény - Miért?',
+        'mirror-2a': 'Nehézség - Mikor?',
+        'mirror-2b': 'Nehézség - Gondolatok',
         'vark-scores': 'VARK Teszt Pontszámok',
         'situation-1': 'Helyzet 1 (Matek feladás)',
         'situation-2': 'Helyzet 2 (Kolléga ellenállása)',
@@ -573,6 +575,12 @@ document.addEventListener('DOMContentLoaded', () => {
             if (navContent) lessonNav.innerHTML = navContent.innerHTML;
             if (bodyContent) lessonContent.innerHTML = bodyContent.innerHTML;
 
+            // Update Page Title from Lesson H1
+            const lessonTitle = doc.querySelector('h1');
+            if (lessonTitle) {
+                document.title = lessonTitle.textContent.trim();
+            }
+
             initLessonUI();
 
         } catch (error) {
@@ -594,6 +602,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Reset progress bar
         if (progressBar) progressBar.style.width = '0%';
+
+        // Reset Title
+        document.title = "Módszertani eszköztár az önszabályozó tanulás fejlesztéséhez";
     };
 
     function initLessonUI() {
@@ -894,7 +905,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <li>d) Kinetikus: ${scores.d}</li>
             </ul>
             <p>Az Ön domináns típusa: <strong>${types.join(", ")}</strong></p>
-            <p class="small">Ha több típus is azonos pontszámot kapott, Ön többcsatornás tanuló!</p>
         `;
 
         if (shouldScroll) {

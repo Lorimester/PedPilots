@@ -1198,7 +1198,7 @@ textarea.reflection-input {
 }
 
 .flip-card-back {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #006064 100%);
     color: white;
     transform: rotateY(180deg);
     overflow-y: auto;
