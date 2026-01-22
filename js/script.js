@@ -578,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Page Title from Lesson H1
             const lessonTitle = doc.querySelector('h1');
             if (lessonTitle) {
-                document.title = lessonTitle.textContent.trim();
+                document.title = `${id}. Lecke - ${lessonTitle.textContent.trim()}`;
             }
 
             initLessonUI();
@@ -734,6 +734,97 @@ document.addEventListener('DOMContentLoaded', () => {
         const option = e.target.closest('.vark-option');
         if (option) {
             const container = option.parentElement;
+
+            // --- Lesson 5 Quiz Logic ---
+            if (window.currentLessonId === 5 && container.id.startsWith('l5-q')) {
+                const correctAnswers = {
+                    'l5-q1': 'b',
+                    'l5-q2': 'd',
+                    'l5-q3': 'b',
+                    'l5-q4': 'b',
+                    'l5-q5': 'b',
+                    'l5-q6': 'c',
+                    'l5-q7': 'b',
+                    'l5-q8': 'b',
+                    'l5-q9': 'b'
+                };
+
+                const questionId = container.id;
+                const correctAnswer = correctAnswers[questionId];
+                const selectedVal = option.dataset.val;
+
+                // Remove previous selection states in this specific question
+                const siblings = container.querySelectorAll('.vark-option');
+                siblings.forEach(s => {
+                    s.classList.remove('selected', 'correct', 'incorrect');
+                    // Remove existing icons
+                    const icon = s.querySelector('.quiz-feedback-icon');
+                    if (icon) icon.remove();
+                });
+
+                // Apply new state
+                option.classList.add('selected');
+
+                const feedbackIcon = document.createElement('span');
+                feedbackIcon.classList.add('quiz-feedback-icon');
+
+                if (selectedVal === correctAnswer) {
+                    option.classList.add('correct');
+                    feedbackIcon.textContent = '✓'; // Checkmark
+                } else {
+                    option.classList.add('incorrect');
+                    feedbackIcon.textContent = '✗'; // X mark
+                }
+                option.appendChild(feedbackIcon);
+
+                // Save simple state (just the selected value)
+                saveData(`${window.currentLessonId}_quiz_${container.id}`, selectedVal);
+                return; // Stop processing generic logic
+            }
+            // --- End Lesson 5 Quiz Logic ---
+
+            // --- Lesson 4 Quiz Logic (Tasks 1-3 only) ---
+            if (window.currentLessonId === 4 && (container.id === 'l4-q1' || container.id === 'l4-q2' || container.id === 'l4-q3')) {
+                const correctAnswers = {
+                    'l4-q1': 'a',
+                    'l4-q2': 'false',
+                    'l4-q3': ['a', 'b'] // Multiple correct answers
+                };
+
+                const questionId = container.id;
+                const correctAnswer = correctAnswers[questionId];
+                const selectedVal = option.dataset.val;
+
+                // Remove previous selection states
+                const siblings = container.querySelectorAll('.vark-option');
+                siblings.forEach(s => {
+                    s.classList.remove('selected', 'correct', 'incorrect');
+                    const icon = s.querySelector('.quiz-feedback-icon');
+                    if (icon) icon.remove();
+                });
+
+                option.classList.add('selected');
+                const feedbackIcon = document.createElement('span');
+                feedbackIcon.classList.add('quiz-feedback-icon');
+
+                const isCorrect = Array.isArray(correctAnswer)
+                    ? correctAnswer.includes(selectedVal)
+                    : selectedVal === correctAnswer;
+
+                if (isCorrect) {
+                    option.classList.add('correct');
+                    feedbackIcon.textContent = '✓';
+                } else {
+                    option.classList.add('incorrect');
+                    feedbackIcon.textContent = '✗';
+                }
+                option.appendChild(feedbackIcon);
+
+                saveData(`${window.currentLessonId}_quiz_${container.id}`, selectedVal);
+                return;
+            }
+            // --- End Lesson 4 Quiz Logic ---
+
 
             // Radio-like behavior for VARK questions
             if (container.id === 'quiz-questions' || container.id === 'vark-quiz-container' || (container.classList.contains('vark-options') && container.closest('.vark-question')) || container.classList.contains('single-select')) {
@@ -993,13 +1084,56 @@ document.addEventListener('DOMContentLoaded', () => {
             const val = localStorage.getItem(prefix + `${window.currentLessonId}_quiz_${container.id}`);
             if (val) {
                 try {
-                    const selectedVals = JSON.parse(val).split(',');
+                    // Handle both simple strings and stringified arrays/strings
+                    let storedVal = JSON.parse(val);
+                    // specific fix: if it was stored as "a,b" string, split it. If array, use as is.
+                    // Actually existing saves are strings. "a" or "a,b"
+                    const selectedVals = String(storedVal).split(',');
+
                     selectedVals.forEach(v => {
+                        if (!v) return;
                         const opt = container.querySelector(`.vark-option[data-val="${v}"]`);
-                        if (opt) opt.classList.add('selected');
+                        if (opt) {
+                            opt.classList.add('selected');
+
+                            // --- Restore Feedback Logic for L4/L5 ---
+                            // Check if this container has a defined correct answer in quizAnswers
+                            // We construct a key like 'l4' or 'l5' based on currentLessonId
+                            const lessonKey = 'l' + window.currentLessonId;
+                            if (quizAnswers[lessonKey] && quizAnswers[lessonKey][container.id] !== undefined) {
+                                const corr = quizAnswers[lessonKey][container.id];
+                                let isCorrect = false;
+
+                                if (Array.isArray(corr)) {
+                                    isCorrect = corr.includes(v);
+                                } else {
+                                    isCorrect = (v === corr); // strict equality (strings)
+                                }
+
+                                // Special handling for 'true'/'false' strings if needed, ensuring data type matches
+                                // The quiz logic saves strings "true"/"false" or "a","b".
+                                // The definition in quizAnswers uses strings too.
+
+                                const feedbackIcon = document.createElement('span');
+                                feedbackIcon.classList.add('quiz-feedback-icon');
+
+                                if (isCorrect) {
+                                    opt.classList.add('correct');
+                                    feedbackIcon.textContent = '✓';
+                                } else {
+                                    opt.classList.add('incorrect');
+                                    feedbackIcon.textContent = '✗';
+                                }
+                                // Avoid duplicate icons if run multiple times (though loadProgress runs once)
+                                if (!opt.querySelector('.quiz-feedback-icon')) {
+                                    opt.appendChild(feedbackIcon);
+                                }
+                            }
+                            // --- End Feedback Logic ---
+                        }
                     });
                 } catch (e) {
-                    console.error("Error loading quiz state", e);
+                    // console.error("Error loading quiz state", e);
                 }
             }
         });

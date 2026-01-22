@@ -670,6 +670,35 @@ textarea.reflection-input {
     color: white;
 }
 
+/* Quiz Feedback Styles */
+.vark-option.correct {
+    border-color: #4CAF50 !important;
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+}
+
+.vark-option.correct span {
+    background-color: #4CAF50 !important;
+    color: white !important;
+}
+
+.vark-option.incorrect {
+    border-color: #F44336 !important;
+    background-color: #ffebee !important;
+    color: #c62828 !important;
+}
+
+.vark-option.incorrect span {
+    background-color: #F44336 !important;
+    color: white !important;
+}
+
+.quiz-feedback-icon {
+    margin-left: auto;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
 /* Flip Cards */
 .flip-grid {
     display: grid;
